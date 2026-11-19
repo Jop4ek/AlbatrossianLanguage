@@ -1,0 +1,2352 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Альбатроссианский — просто</title>
+<style>
+  :root{
+    --bg:#ffffff; --fg:#111111; --muted:#666666;
+    --line:#dddddd; --soft:#f4f4f4;
+    --radius:10px; --font:"Helvetica Neue",Arial,sans-serif;
+    --mono:"Consolas","Courier New",monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; background:var(--bg); color:var(--fg);
+    font-family:var(--font); line-height:1.6; -webkit-font-smoothing:antialiased}
+  a{color:inherit}
+
+  header{text-align:center; padding:48px 20px 36px;
+    border-bottom:1px solid var(--line); animation:fadeDown .6s ease both}
+  .manface{width:96px; height:96px; border-radius:50%; object-fit:cover;
+    border:3px solid var(--fg); display:block; margin:0 auto 16px;
+    filter:grayscale(100%) contrast(1.05);
+    transition:transform .35s ease, filter .35s ease; animation:pop .6s ease both}
+  .manface:hover{transform:scale(1.06) rotate(-2deg); filter:grayscale(0%)}
+  header h1{margin:0 0 6px; font-size:2rem; font-weight:800; letter-spacing:-.5px}
+  header p{margin:0; color:var(--muted); max-width:720px; margin-inline:auto; font-size:.98rem}
+
+  nav{position:sticky; top:0; z-index:10; background:#fff;
+    border-bottom:1px solid var(--line); display:flex; flex-wrap:wrap;
+    justify-content:center; gap:2px; padding:6px 8px}
+  nav button{background:none; border:none; color:var(--muted);
+    font:inherit; font-size:.9rem; padding:9px 12px; cursor:pointer;
+    position:relative; transition:color .2s ease}
+  nav button::after{content:""; position:absolute; left:12px; right:12px; bottom:5px;
+    height:2px; background:var(--fg); transform:scaleX(0);
+    transform-origin:left; transition:transform .25s ease}
+  nav button:hover{color:var(--fg)}
+  nav button.active{color:var(--fg); font-weight:700}
+  nav button.active::after{transform:scaleX(1)}
+
+  main{max-width:980px; margin:0 auto; padding:28px 18px 64px}
+  section{display:none}
+  section.active{display:block; animation:fadeUp .4s ease both}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none}}
+  @keyframes fadeDown{from{opacity:0; transform:translateY(-10px)} to{opacity:1; transform:none}}
+  @keyframes pop{from{opacity:0; transform:scale(.85)} to{opacity:1; transform:scale(1)}}
+
+  h2{font-size:1.35rem; font-weight:800; margin:0 0 16px; padding-bottom:8px; border-bottom:1px solid var(--line)}
+  h3{font-size:1.02rem; font-weight:700; margin:22px 0 8px}
+  p{margin:8px 0}
+
+  .card{border:1px solid var(--line); border-radius:var(--radius);
+    padding:18px 20px; margin-bottom:14px;
+    transition:box-shadow .25s ease, transform .25s ease}
+  .card:hover{box-shadow:0 4px 18px rgba(0,0,0,.06); transform:translateY(-1px)}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+
+  table{width:100%; border-collapse:collapse; font-size:.93rem}
+  th,td{padding:8px 10px; border-bottom:1px solid var(--line); text-align:left}
+  th{font-weight:700; color:var(--fg); background:var(--soft)}
+  tr{transition:background .15s ease}
+  tbody tr:hover{background:var(--soft)}
+  .sym{font-family:var(--mono); font-size:1.12rem; font-weight:700}
+
+  .muted{color:var(--muted); font-size:.9rem}
+  ul.rules{padding-left:20px; margin:6px 0}
+  ul.rules li{margin:5px 0}
+  .example{font-family:var(--mono); border:1px solid var(--line);
+    border-radius:8px; padding:10px 12px; margin:8px 0; font-size:1rem;
+    transition:background .2s ease; display:flex; align-items:flex-start; gap:10px}
+  .example:hover{background:var(--soft)}
+  .example .body{flex:1; min-width:0}
+  .example .tr{display:block; font-family:var(--font); font-size:.86rem; color:var(--muted); margin-top:4px}
+  code{font-family:var(--mono); background:var(--soft); padding:1px 6px; border-radius:5px}
+
+  input,select,textarea{
+    width:100%; font:inherit; color:var(--fg); background:#fff;
+    border:1px solid var(--line); border-radius:8px; padding:10px 12px;
+    transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  textarea{min-height:90px; resize:vertical}
+  input:focus,select:focus,textarea:focus{outline:none; border-color:var(--fg); box-shadow:0 0 0 2px #0001}
+  .row{display:flex; gap:10px; flex-wrap:wrap; margin:10px 0}
+  .row > *{flex:1 1 150px}
+  label{display:block; font-size:.82rem; color:var(--muted); margin-bottom:4px}
+
+  button.btn{font:inherit; font-weight:700; cursor:pointer;
+    background:var(--fg); color:#fff; border:1px solid var(--fg);
+    border-radius:8px; padding:10px 18px;
+    transition:background .2s ease, color .2s ease, transform .1s ease}
+  button.btn:hover{background:#fff; color:var(--fg)}
+  button.btn:active{transform:scale(.98)}
+  button.btn.sec{background:#fff; color:var(--fg)}
+  button.btn.sec:hover{background:var(--fg); color:#fff}
+
+  button.speak{
+    flex:0 0 auto; width:30px; height:30px; border-radius:50%;
+    border:1px solid var(--line); background:#fff; color:var(--fg);
+    cursor:pointer; font-size:.85rem; line-height:1;
+    display:inline-flex; align-items:center; justify-content:center;
+    transition:background .2s ease, transform .15s ease, border-color .2s ease;
+  }
+  button.speak:hover{background:var(--fg); color:#fff; border-color:var(--fg); transform:scale(1.08)}
+  button.speak.playing{animation:pulse .8s ease infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 #0003} 50%{box-shadow:0 0 0 6px #0000}}
+
+  .out{border:1px dashed var(--line); border-radius:8px; padding:14px;
+    font-family:var(--mono); min-height:46px; margin-top:10px;
+    white-space:pre-wrap; transition:border-color .3s ease, background .3s ease}
+  .out.flash{border-color:var(--fg); background:var(--soft)}
+
+  .dict-controls{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px}
+  .dict-controls input{flex:2 1 220px}
+  .dict-controls select{flex:1 1 150px; max-width:230px}
+  .dict-wrap{max-height:520px; overflow:auto; border:1px solid var(--line); border-radius:8px}
+  .dict-wrap thead th{position:sticky; top:0; background:var(--soft); z-index:1}
+  .dict-word{display:flex; align-items:center; gap:8px}
+
+  .quiz-q{font-size:1.05rem; margin-bottom:12px}
+  .quiz-options{display:grid; gap:8px}
+  .quiz-options button{text-align:left; font-family:var(--mono); font-size:1rem;
+    background:#fff; color:var(--fg); border:1px solid var(--line);
+    border-radius:8px; padding:10px 14px; cursor:pointer;
+    transition:background .15s ease, border-color .15s ease, transform .1s ease;
+    display:flex; align-items:center; gap:10px}
+  .quiz-options button:hover{border-color:var(--fg); transform:translateX(2px)}
+  .quiz-options button.ok{background:var(--fg); color:#fff; border-color:var(--fg)}
+  .quiz-options button.bad{background:var(--soft); border-color:var(--fg); text-decoration:line-through}
+  .quiz-status{margin-top:12px; font-weight:700}
+
+  .case-ex{font-family:var(--mono); font-size:.9rem}
+
+  footer{text-align:center; color:var(--muted); font-size:.82rem;
+    padding:28px 16px; border-top:1px solid var(--line);
+    display:flex; flex-direction:column; align-items:center; gap:8px}
+  footer img{width:40px; height:40px; border-radius:50%; filter:grayscale(100%); object-fit:cover}
+
+  .toast{position:fixed; left:50%; bottom:20px; transform:translate(-50%,20px);
+    background:var(--fg); color:#fff; padding:10px 18px; border-radius:8px;
+    font-size:.9rem; opacity:0; pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease}
+  .toast.show{opacity:1; transform:translate(-50%,0)}
+
+  .translator-grid{display:grid; grid-template-columns:1fr auto 1fr; gap:12px; align-items:start}
+  @media(max-width:760px){.translator-grid{grid-template-columns:1fr}}
+  .translator-side{display:flex; flex-direction:column; gap:8px}
+  .translator-arrow{display:flex; align-items:center; justify-content:center; font-size:1.4rem; color:var(--muted); padding-top:28px}
+  @media(max-width:760px){.translator-arrow{padding:0; transform:rotate(90deg)}}
+  .translator-notes{margin-top:10px; font-size:.86rem; color:var(--muted); white-space:pre-wrap;
+    border-top:1px dashed var(--line); padding-top:10px}
+</style>
+</head>
+<body>
+
+<header>
+  <img class="manface"
+       src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAJQAlAMBIgACEQEDEQH/xAAcAAEAAQUBAQAAAAAAAAAAAAAABgEDBQcIAgT/xAA4EAABBAECBAMGBAMJAAAAAAABAAIDBAUGEQcSITFBUWETFCIygZEVcaHRFpTBIyQ0NUJSU2KS/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AN4oiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiLDah1HSwTI2zl0tqbpBWiG8kh9B5eqDMotPao4xvwzH1oa0E2Rd3iY/mZXHk5w7u/JQObWPEXUZMlN932ZO4FSLlAH0QdObqq5gZHxTbtI0Zz8ySr7OIHEPTzg2+Z+Ud22oN9/qg6YRc9V+PWbjAE+LqSkdzzlu6yWK49TzZCGK/ho2V3uDXOhlJcNz5FBvNF4ieJYmSN32c0Eb+q9PJDHFreYgdB5oKotM5vjVew2VsULmnjFJC4t2fJ1PkVgL3HnMSgipjKsPk4uLig6FVN/Nct2eKOtsq8shuObzdm14QNvsvEc3Em+eaN+bkJ8QXBB1M97WNLnkBoG5JRj2SN5mODmnxB3C5rr5Hilhh7WaLJSQ7fEyePnaR6rJaZ1yJ74ZXtOwWSLtnQSkuqTu37Fp+QnzQdCIsHpbN2MvWmF6k6pbrv5JWb7sd03DmnxBCziAiIgKD680xfuxWJ9OMjZk73JDPakf1ihHflB7fRThEEE0dwvwOnI2SzQNvXiBzzzjfY+g7BTcMbEzljY0ADo0DYL483l6uGoutW3HYdGMaN3Pd4ABRQYPN6td71nchLj6Dh/Y0KUmxIPYvePH0HRBnH5nLh7gzTs7gDsHe9Rdf1VuXK5aRpDtLyv6dnWYf3XNGpcnksTqLJUaeRuRw17D42B0pJ2B26rM6cydy/nsFj4NR5GVt1wbaa1xaYneQ80G6rNCK9v79oSN5PcmSE/wBVfw+ktHx3g+riaMeQh2c+Lo50R9Qonp6DM4vXVjAZLUORYHEy0HSbPZOwDcg7+IWTzeKmq8XsHfx5cDbrvFsDsWtGwJ+6DZAGyqiII5qnEabyHsvx6rSlsP8Agg9uQ1zz4AFR+npeCg7+7aHoDY9HumYT+pVy9i/fOLdSxkGc9aLHF9RrvlEod8RHrsQsTxNrZKzmKOIxOTyD719/N7ON/LHXiG3M47fpugl0E+TrMDYNMQxgdgyeMf1V5uXzTfnwGw9LcX7rn/itWs6Y1DHjqd66Y/d2vc6SZx53HuVGMZYbajnN/KW2zN5fd4mucfaknqPRB2FXkM0LHyMDHEblnMHcp8twozq/h/gtVV3C5WbDZ/02YRs8fv8AVYihouXEY+tkdMZKxTs+ybJJBalMkUvTctdv2/MKS6X1FHmoTHM1sF+LpNCHcwJHi0+LfVBjeHuGzunq9jE5aeO1Sg29ysD5y3/a4enRTBEQEREBERB889KvYkbJPCyR7QWguG+wPdQy5w6kFuSXC6kyeLheS73eFwcxpPlv2U7RBqG7wMq37Ulq7qG7NPKeZ8jo27uKv4XgtBhMjFfx+ftMsRb8rjC07bra6IIj/CeSktV7FvPusvrv54jJWaS0+h3UnFWL3htksaZwzk9pt128lfRAREQWZKsMs0U0kTHSxb+zeR1bv5KP5DS9q1kpb0OasVZZAG7wxtBDR2G6kyINb5zhLWz87J8xnL9mVjeVrn7dB5LGs4E4SN7XsyVwOadwRt0K20iCAR8MYXyM/EM9lbcIPxQvl2a70O3gprVx9SoyJtavHGIWcjOVu3K3yX1IgIiICIiAiIgIiICIiAiIgIiICIiAiIgKzbtQU677FmRscTOrnOOwCvKHTTHU2rDSjPNisSQ6cg9JbHcM9QAQfqgl7HB7Q5vY9QvSoBsNlVAREQEREBERARUc4NaXOIDR1JJ7LzFLHNGJIntex3ZzTuCg9oiICIqEgDckD80FUXyWcnRqsL7FyCNo7l0gCjWU4laWx+7RkRam/wCGq0yP+wQTBYepqGpdz9rEVQ6WSrG180rR8DCezd/NQx+Y1hrPeDC0X4PGv6Pu2hvK4f8AVvh9VNNM6fpabxralJriSeaWV53fK49ySgt6yzIwOnbl4bGVrOSFu/zSHo0fdWtDYg4bTtWGbramHt7L9ti6V/V2/wBSsPrFv4xq7T+C7xRvN+w0+LWfKPupwOyAiIgIiICIiAiIg+HN0vxLEXKIeWGxC6PmHcbhak0hpXWdjCtZT1TJQNaR0JrPrjZnKduh8Qe63SqAAdgEGsP4R4i+GtGfy4VDo/iG7o/WjdvSuFtFEGrv4C1rL/iNdTAeTIdl6HCvIWP8w1nmZB4iOXlC2eiDXlXg9pprw+8+7fd52Zy5SnE6TwGHaBjsVVhI7OEYLvuVmkQU2VURBEcJCbWvM9fcOYV44qkbvLpzED/0FLljcNi/w1115k9o+1YMzjttt0A2/RZJAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQf/2Q=="
+       alt="MANFACE Roblox">
+  <h1>Альбатроссианский</h1>
+  <p>Автономный язык. Чёрно-белый самоучитель: алфавит, правила, падежи, словарь (1750 уникальных слов), умный переводчик, конструктор, тест и озвучивание.</p>
+</header>
+
+<nav id="nav">
+  <button data-tab="intro" class="active">О языке</button>
+  <button data-tab="alphabet">Алфавит</button>
+  <button data-tab="rules">Правила</button>
+  <button data-tab="cases">Падежи</button>
+  <button data-tab="dictionary">Словарь</button>
+  <button data-tab="phrases">Фразы</button>
+  <button data-tab="translator">Переводчик</button>
+  <button data-tab="builder">Конструктор</button>
+  <button data-tab="quiz">Тест</button>
+</nav>
+
+<main>
+
+<section id="intro" class="active">
+  <h2>О языке</h2>
+  <div class="card">
+    <p><b>Самоназвание:</b> <span class="sym">ᔑꖎʖᔑ勹∷フᓭᓭ￤ᔑリ</span></p>
+    <p>Каждый символ читается по таблице алфавита; звучание не меняется. Слова, грамматика и порядок слов — собственные. Русский — только язык объяснения.</p>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <h3>Ключевое</h3>
+      <ul class="rules">
+        <li>Порядок слов <b>SOV</b></li>
+        <li>Есть <b>7 падежей</b> (см. вкладку «Падежи»)</li>
+        <li>Мн. число: <span class="sym">-ᓭ</span></li>
+        <li>Прошедшее: <span class="sym">ꖌᔑ</span>, будущее: <span class="sym">⟠</span></li>
+        <li>Отрицание: <span class="sym">リフ</span> перед глаголом</li>
+        <li>Вопрос: <span class="sym">ᒷ</span> в конце</li>
+        <li>Неизвестные слова — <b>побуквенно</b>: <span class="sym">ꖌ￤∷￤ꖎꖎ</span> «Кирилл»</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Пример</h3>
+      <div class="example" data-say="ᒲᔑꖌᔑ ᓭᔑꖎ ∷ᒷꖌ">
+        <button class="speak" title="Произнести">🔊</button>
+        <div class="body">ᒲᔑꖌᔑ ᓭᔑꖎ ∷ᒷꖌ.<span class="tr">Корова ест траву.</span></div>
+      </div>
+      <div class="example" data-say="ᒲ￤ ᒲᔑꖌᔑ勹 リフ ⍊ᔑ￤ ꖌᔑ">
+        <button class="speak" title="Произнести">🔊</button>
+        <div class="body">ᒲ￤ ᒲᔑꖌᔑ勹 リフ ⍊ᔑ￤ ꖌᔑ.<span class="tr">Я не видел корову.</span></div>
+      </div>
+      <div class="example" data-say="ᒲ￤ ꖌ￤∷￤ꖎꖎ">
+        <button class="speak" title="Произнести">🔊</button>
+        <div class="body">ᒲ￤ ꖌ￤∷￤ꖎꖎ.<span class="tr">Я Кирилл.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="alphabet">
+  <h2>Алфавит</h2>
+  <div class="card">
+    <p class="muted">33 знака. 🔊 — звук, 🗣 — имя знака.</p>
+    <table>
+      <thead><tr><th>Символ</th><th>Звук</th><th>Имя</th><th>🔊/🗣</th><th>Символ</th><th>Звук</th><th>Имя</th><th>🔊/🗣</th></tr></thead>
+      <tbody id="alphabet-body"></tbody>
+    </table>
+  </div>
+</section>
+
+<section id="rules">
+  <h2>Правила</h2>
+  <div class="card">
+    <h3>Фонетика</h3>
+    <ul class="rules">
+      <li>Одно основное чтение на символ.</li>
+      <li><span class="sym">ᒷ ⸚ ⟠ ⟁</span> после согласной дают мягкость, в начале слова — [je jo ju ja].</li>
+      <li><span class="sym">⁖ ⁘</span> звука не обозначают.</li>
+      <li>Ударение — на предпоследнем слоге. Редукции нет.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Существительное</h3>
+    <ul class="rules">
+      <li>Существительные имеют два склонения: <b>1-е</b> — мужской род; <b>2-е</b> — женский и средний род.</li>
+      <li>1-е склонение: прямой падеж — без окончания; остальные: <span class="sym">∷ ↸ 勹 ⎓ ┫ ⁘</span>.</li>
+      <li>2-е склонение: прямой падеж — без окончания; остальные: <span class="sym">ソ∷ ソ↸ ソ勹 ソ⎓ ソ┫ ソ⁘</span>. Маркер <span class="sym">ソ</span> ставится перед падежным знаком.</li>
+      <li>Мн. число — <span class="sym">-ᓭ</span>, ставится после основы и перед падежным окончанием.</li>
+      <li>Принадлежность также может выражаться <span class="sym">ᒷ⋮</span>; склонение определяется по словарной форме.</li>
+      <li>Указатели: <span class="sym">勹⚍勹</span> «этот», <span class="sym">勹ᔑᒲ</span> «тот».</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Склонения и определение рода</h3>
+    <ul class="rules">
+      <li><b>1-е склонение:</b> мужской род. Основа + <span class="sym">∷ / ↸ / 勹 / ⎓ / ┫ / ⁘</span>.</li>
+      <li><b>2-е склонение:</b> женский и средний род. Основа + <span class="sym">ソ∷ / ソ↸ / ソ勹 / ソ⎓ / ソ┫ / ソ⁘</span>.</li>
+      <li><span class="sym">ソ</span> — грамматический маркер 2-го склонения; он ставится перед падежным знаком.</li>
+      <li>Переводчик определяет род по словарной форме: обычно -а/-я — женский, -о/-е — средний; остальные формы по умолчанию мужские. Для исключений используется словарная форма и контекст.</li>
+      <li>При обратном переводе сначала снимается составное окончание <span class="sym">ソ</span> + падежный знак, затем находится словарная основа.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Прилагательное</h3>
+    <ul class="rules">
+      <li>Перед существительным, не согласуется: <span class="sym">ꖎᔑ リᔑᒲ</span>.</li>
+      <li>Сравнительная — <span class="sym">-勹ᔑ</span>, превосходная — <span class="sym">-ᓭフ</span>.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Глагол</h3>
+    <ul class="rules">
+      <li>Стоит в конце (SOV).</li>
+      <li>Прошедшее — <span class="sym">ꖌᔑ</span>, будущее — <span class="sym">⟠</span> после глагола.</li>
+      <li>Отрицание — <span class="sym">リフ</span> перед глаголом; вопрос — <span class="sym">ᒷ</span> в конце.</li>
+      <li>Побуждение — <span class="sym">∏ᔑ</span> перед глаголом.</li>
+      <li>Модальность: <span class="sym">冫フ勹</span> «хотеть», <span class="sym">ᒲフ┫</span> «мочь».</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Имена и заимствования</h3>
+    <ul class="rules">
+      <li>Имена и неизвестные слова записываются <b>побуквенно</b> символами алфавита:
+          <span class="sym">ꖌ￤∷￤ꖎꖎ</span> «Кирилл», <span class="sym">ꖌᓭ勹ᔑ勹￤</span> «кстати».</li>
+      <li>В прямом падеже — без окончания; в других — с обычным падежным окончанием.</li>
+      <li>Переводчик сам делает побуквенную запись, если слова нет в словаре.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Корень «альб» — только для Альбатросии</h3>
+    <ul class="rules">
+      <li>Сочетание <span class="sym">ᔑꖎʖ</span> («альб») — зарезервированный корень. Как окончание, суффикс или случайный слог его <b>не бывает</b>.</li>
+      <li>«Альб» появляется <b>только</b> в словах семьи Альбатрос: Альбатрос <span class="sym">ᔑꖎʖᔑ勹∷フᓭ</span>, Альбатросия <span class="sym">ᔑꖎʖᔑ勹∷フᓭ⚍ᒲᔑ</span> (<span class="sym">-⚍ᒲᔑ</span> «страна»), альбатросский <span class="sym">ᔑꖎʖᔑ勹∷フᓭᒷ冫</span> (<span class="sym">-ᒷ冫</span> «относящийся к»), альбатросец <span class="sym">ᔑꖎʖᔑ勹∷フᓭリᔑᒲ</span>, Альбатроссианский <span class="sym">ᔑꖎʖᔑ勹∷フ∷ᓭᓭ￤ᔑリ</span> «язык».</li>
+      <li>Если слова из этой семьи нет, «альб» в слове невозможен: ни в корне, ни на конце.</li>
+      <li>Имя знака <span class="sym">ᔑ</span> — «альб» — это название буквы, а не слово и не окончание.</li>
+      <li>Чужое имя, где побуквенная запись даёт <span class="sym">ᔑꖎʖ</span>, пишется с разделителем <span class="sym">⁖</span>: <span class="sym">ᔑꖎ⁖ʖ…</span>.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Послелоги (дублируют падежи)</h3>
+    <table>
+      <thead><tr><th>Послелог</th><th>Падеж</th><th>Пример</th></tr></thead>
+      <tbody>
+        <tr><td class="sym">￤リ</td><td>местный <span class="sym">-┫</span></td><td><span class="sym">∷⚍ᒲ ┫</span> / <span class="sym">∷⚍ᒲ ￤リ</span> — в доме</td></tr>
+        <tr><td class="sym">⎓⚍⫛⟠</td><td>указательный <span class="sym">-↸</span></td><td><span class="sym">∷⚍ᒲ ↸</span> / <span class="sym">∷⚍ᒲ ⎓⚍⫛⟠</span> — к дому</td></tr>
+        <tr><td class="sym">∏∋リフリフ</td><td>брательный <span class="sym">-∷</span></td><td><span class="sym">∷⚍ᒲ ∷</span> / <span class="sym">∷⚍ᒲ ∏∋リフリフ</span> — из дома</td></tr>
+        <tr><td class="sym">リᔑ</td><td>местный <span class="sym">-┫</span></td><td><span class="sym">ᓭᔑꖎ ┫</span> / <span class="sym">ᓭᔑꖎ リᔑ</span> — на траве</td></tr>
+        <tr><td class="sym">ᒲᒷ⫛⟁</td><td>действовательный <span class="sym">-⎓</span></td><td><span class="sym">∏ᔑ∷フ ⎓</span> / <span class="sym">∏ᔑ∷フ ᒲᒷ⫛⟁</span> — с другом</td></tr>
+        <tr><td class="sym">ᒷ⋮</td><td>брательный <span class="sym">-∷</span></td><td><span class="sym">ᒲ￤ ∷</span> / <span class="sym">ᒲ￤ ᒷ⋮</span> — мой</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h3>Числительные</h3>
+    <ul class="rules">
+      <li>1–10: <span class="sym">ꖎ⟠ꖎ∋∏フ ꖎ⟁⫛￤ ⎓⟠勹フ ⍊⟁↸フ⍊ᔑ ⎓⟠ᒲ勹フꖌ⚍ 勹フ勹‖ 〒ᔑᓭ∷ᒷ勹ᑑ⟠ ┫∋ᓭʖᒷ 冫⚍∷⟁ ⫛⟠ᑑ∋</span>.</li>
+      <li>11–19: <span class="sym">⫛⟠ᑑ∋</span> + единица (⫛⟠ᑑ∋ꖎ⟠ꖎ∋∏フ = 11). Десятки: единица + <span class="sym">⫛⟠ᑑ∋</span> (⎓⟠勹フ⫛⟠ᑑ∋ = 30).</li>
+      <li>Порядковые: <span class="sym">-勹ᔑ</span>.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Словообразование</h3>
+    <ul class="rules">
+      <li>Сложение корней: <span class="sym">ᓭᔑꖎ</span> + <span class="sym">∷⚍ᒲ</span> → <span class="sym">ᓭᔑꖎ∷⚍ᒲ</span> «хлев (травяной дом)».</li>
+      <li>Агент — <span class="sym">-リᔑᒲ</span>: <span class="sym">∷ᔑʖリᔑᒲ</span> «работник».</li>
+      <li>Уменьшительность — <span class="sym">-￤ꖌ</span>: <span class="sym">∷⚍ᒲ￤ꖌ</span> «домик».</li>
+      <li>Отрицание качества — <span class="sym">リᒷ-</span>: <span class="sym">リᒷꖎᔑ</span> «плохой».</li>
+      <li>Абстрактное понятие — <span class="sym">-フᓭ勹</span>: <span class="sym">ꖎᔑフᓭ勹</span> «доброта».</li>
+      <li>Научная лексика использует самостоятельные альбатроссианские корни. У биологических и географических терминов нет общего категорийного префикса: начальные согласные двух групп не пересекаются, а каждый термин имеет отдельную форму. Научные слова не транслитерируются с русского.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="cases">
+  <h2>Падежи</h2>
+  <div class="card">
+    <p>В альбатроссианском <b>7 падежей</b>. Падежное окончание зависит от склонения: 1-е (мужской род) использует одиночный знак, 2-е (женский и средний род) — <span class="sym">ソ</span> + знак. Прямой падеж нулевой. Множественное число <span class="sym">-ᓭ</span> ставится перед падежным окончанием.</p>
+     <p class="muted">Примеры ниже: мужской род «дом» <span class="sym">∷⚍ᒲ</span>; женский род «корова» <span class="sym">ᒲᔑꖌᔑ</span>.</p>
+    <table>
+      <thead><tr><th>№</th><th>Падеж</th><th>Вопросы</th><th>1-е склонение (м.)</th><th>Пример</th><th>2-е склонение (ж./ср.)</th><th>Пример</th></tr></thead>
+      <tbody id="cases-body"></tbody>
+    </table>
+    <p class="muted">Звательный падеж — для обращения: <span class="sym">∏ᔑ∷フ ⁘</span> «о, друг!».</p>
+  </div>
+</section>
+
+<section id="dictionary">
+  <h2>Словарь</h2>
+  <div class="card">
+    <div class="dict-controls">
+      <input id="dict-search" type="text" placeholder="Поиск: русский или альбатроссианский…">
+      <select id="dict-cat"><option value="">Все категории</option></select>
+      <button class="btn sec" id="dict-reset">Сброс</button>
+    </div>
+    <div class="row" style="align-items:end">
+      <div><label>Показать падежную форму</label>
+        <select id="dict-case"><option value="">— словарная форма —</option></select>
+      </div>
+    </div>
+    <p class="muted" id="dict-count"></p>
+    <div class="dict-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Русский</th><th>Альбатроссианский</th><th>Категория</th></tr></thead>
+        <tbody id="dict-body"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="phrases">
+  <h2>Фразы</h2>
+  <div class="card" id="phrases-list"></div>
+</section>
+
+<section id="translator">
+  <h2>Переводчик</h2>
+  <div class="card">
+    <p class="muted">Умный перевод: учитывает оба склонения, падежи, порядок SOV, время, отрицание и вопрос. Распознаёт словарную основу после окончания; неизвестные слова записываются <b>побуквенно</b>.</p>
+    <div class="translator-grid">
+      <div class="translator-side">
+        <label>Русский → Альбатроссианский</label>
+        <textarea id="tr-ru" placeholder="Например: Я Кирилл."></textarea>
+        <div class="row">
+          <button class="btn" id="tr-ru-go">Перевести</button>
+          <button class="btn sec" id="tr-ru-speak">🔊 Озвучить</button>
+        </div>
+        <div class="out" id="tr-ru-out">—</div>
+      </div>
+      <div class="translator-arrow">⇄</div>
+      <div class="translator-side">
+        <label>Альбатроссианский → Русский</label>
+        <textarea id="tr-alb" placeholder="Например: ᒲ￤ ꖌ￤∷￤ꖎꖎ."></textarea>
+        <div class="row">
+          <button class="btn" id="tr-alb-go">Перевести</button>
+          <button class="btn sec" id="tr-alb-speak">🔊 Озвучить</button>
+        </div>
+        <div class="out" id="tr-alb-out">—</div>
+      </div>
+    </div>
+    <div class="translator-notes" id="tr-notes"></div>
+  </div>
+</section>
+
+<section id="builder">
+  <h2>Конструктор</h2>
+  <div class="card">
+    <p class="muted">Соберите предложение по правилам SOV. Для дополнения можно выбрать падеж.</p>
+    <div class="row">
+      <div><label>Подлежащее (прямой падеж)</label><select id="b-subj"></select></div>
+      <div><label>Дополнение</label><select id="b-obj"></select></div>
+      <div><label>Падеж дополнения</label><select id="b-case"></select></div>
+      <div><label>Глагол</label><select id="b-verb"></select></div>
+    </div>
+    <div class="row">
+      <div><label>Время</label><select id="b-tense">
+        <option value="">настоящее</option>
+        <option value="past">прошедшее</option>
+        <option value="future">будущее</option>
+      </select></div>
+      <div><label>Отрицание</label><select id="b-neg">
+        <option value="">нет</option><option value="yes">да</option>
+      </select></div>
+      <div><label>Вопрос</label><select id="b-q">
+        <option value="">нет</option><option value="yes">да</option>
+      </select></div>
+    </div>
+    <div class="row">
+      <button class="btn" id="b-build">Построить</button>
+      <button class="btn sec" id="b-random">Случайное</button>
+      <button class="btn sec" id="b-speak">🔊 Озвучить</button>
+    </div>
+    <div class="out" id="b-out">—</div>
+    <p class="muted" id="b-gloss"></p>
+  </div>
+</section>
+
+<section id="quiz">
+  <h2>Тест</h2>
+  <div class="card">
+    <div class="quiz-q" id="quiz-q">Загрузка…</div>
+    <div class="quiz-options" id="quiz-options"></div>
+    <div class="quiz-status" id="quiz-status"></div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn" id="quiz-next">Следующий</button>
+      <button class="btn sec" id="quiz-restart">Заново</button>
+    </div>
+    <p class="muted">Счёт: <span id="quiz-score">0</span> / <span id="quiz-total">0</span></p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <img src="data:image/jpeg;base64,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"
+       alt="MANFACE Roblox">
+  <span>Альбатроссианский — учебный конланг</span>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   ДАННЫЕ
+   ============================================================ */
+const ALPHABET = [
+  ["ᔑ","[a]","альб"],["ʖ","[b]","бэр"],["⍊","[v]","вэй"],["┫","[g]","гар"],
+  ["↸","[d]","дор"],["ᒷ","[e]/[je]","ель"],["⸚","[o]/[jo]","ёрн"],["⫛","[ʐ]","жир"],
+  ["∧","[z]","зет"],["￤","[i]","иль"],["⋮","[j]","йот"],["ꖌ","[k]","кар"],
+  ["ꖎ","[l]","лор"],["ᒲ","[m]","мир"],["リ","[n]","нор"],["フ","[o]","ор"],
+  ["∏","[p]","пир"],["∷","[r]","ру"],["ᓭ","[s]","сиг"],["勹","[t]","тор"],
+  ["⚍","[u]","ур"],["⎓","[f]","фау"],["冫","[x]","хей"],["ᑑ","[ts]","ци"],
+  ["〒","[tʃ]","чар"],["∴","[ʃ]","шар"],["⨿","[ɕː]","щит"],["⁖","—","твёр"],
+  ["‖","[ɨ]","ыр"],["⁘","—","мяг"],["∋","[ɛ]","эрн"],["⟠","[u]/[ju]","ют"],
+  ["⟁","[a]/[ja]","яр"]
+];
+
+/* ============================================================
+   ЗВУКИ (чистые звуки, не имена знаков)
+   ============================================================ */
+const SYM_SOUND = {
+  "ᔑ":"а","ʖ":"б","⍊":"в","┫":"г","↸":"д","ᒷ":"е","⸚":"ё","⫛":"ж",
+  "∧":"з","￤":"и","⋮":"й","ꖌ":"к","ꖎ":"л","ᒲ":"м","リ":"н","フ":"о",
+  "∏":"п","∷":"р","ᓭ":"с","勹":"т","⚍":"у","⎓":"ф","冫":"х","ᑑ":"ц",
+  "〒":"ч","∴":"ш","⨿":"щ","⁖":"","‖":"ы","⁘":"ь","∋":"э","⟠":"ю","⟁":"я"
+};
+/* Обратная карта для транслитерации */
+const RU2SYM = {};
+Object.entries(SYM_SOUND).forEach(([sym,ru])=>{
+  if(ru && !RU2SYM[ru]) RU2SYM[ru]=sym;
+});
+RU2SYM["ъ"] = "⁖";
+RU2SYM["ь"] = "⁘";
+
+const SYM_NAME = {};
+ALPHABET.forEach(([s,_,name])=>SYM_NAME[s]=name);
+
+const CASES = [
+  {n:1, name:"Прямой", q:"кто? что?", end:"—", sym:"", ex:"∷⚍ᒲ", read:"рум", note:"нулевое окончание"},
+  {n:2, name:"Брательный", q:"кого? чего? чей?", end:"∷", sym:"∷", ex:"∷⚍ᒲ∷", read:"рум-ру", note:"принадлежность, источник"},
+  {n:3, name:"Указательный", q:"кому? чему? куда?", end:"↸", sym:"↸", ex:"∷⚍ᒲ↸", read:"рум-дор", note:"адресат, направление"},
+  {n:4, name:"Направительный", q:"кого? что?", end:"勹", sym:"勹", ex:"∷⚍ᒲ勹", read:"рум-тор", note:"прямое дополнение"},
+  {n:5, name:"Действовательный", q:"кем? чем?", end:"⎓", sym:"⎓", ex:"∷⚍ᒲ⎓", read:"рум-фау", note:"инструмент, совместность"},
+  {n:6, name:"Местный", q:"где? в чём? на чём?", end:"┫", sym:"┫", ex:"∷⚍ᒲ┫", read:"рум-гар", note:"место"},
+  {n:7, name:"Звательный", q:"о, кто? эй, кто?", end:"⁘", sym:"⁘", ex:"∷⚍ᒲ⁘", read:"рум-мяг", note:"обращение"}
+];
+
+/* ============================================================
+   СЛОВАРЬ (1750 уникальных слов)
+   ============================================================ */
+const DICTIONARY = [
+  ["привет", "ꖎ‖ꖌʖフᑑ∋", "Приветствия"],["здравствуйте", "ʖフ⍊‖", "Приветствия"],["пока", "↸⟁リꖎフ", "Приветствия"],
+  ["спасибо", "⍊⟠ꖌ∴⚍", "Приветствия"],["пожалуйста", "勹∋ᓭᔑ", "Приветствия"],["извините", "∷∋∧∋∷ᒷ", "Приветствия"],
+  ["да", "⋮ᔑ", "Приветствия"],["нет", "リフ", "Приветствия"],["доброе утро", "リ∋∧⟁勹ᒲ∋ リ∋リ⍊‖", "Приветствия"],
+  ["добрый вечер", "リ⟁ꖎᒷ ʖ⟁∷⍊￤", "Приветствия"],["доброй ночи", "∧‖勹⚍ ꖌ‖⎓ᔑ⫛⟠", "Приветствия"],["до свидания", "∧フ∷リ⟁ᑑᔑ ∧‖ꖌ∋勹ꖎ∋", "Приветствия"],
+  ["как дела", "∷ᔑ∷ᒲ￤ꖎフ 勹⟁∴フ", "Приветствия"],["хорошо", "ᑑ⚍ꖌ⚍ꖌ∴‖", "Приветствия"],["плохо", "⫛‖ꖌ∷￤↸∋", "Приветствия"],
+  ["рад встрече", "∴‖ꖌフ 勹フᓭ∴￤", "Приветствия"],["удачи", "ᓭᔑ∷┫ᔑ勹⎓⚍", "Приветствия"],["будь здоров", "勹￤ꖎ￤ ⫛‖┫￤勹∷ᒷ", "Приветствия"],
+  ["я", "ᒲ￤", "Местоимения"],["ты", "勹⚍", "Местоимения"],["он", "ᓭᔑ", "Местоимения"],
+  ["она", "ᓭᔑ￤", "Местоимения"],["оно", "ᓭᔑフ", "Местоимения"],["мы", "ᒲ￤ᓭ", "Местоимения"],
+  ["вы", "勹⚍ᓭ", "Местоимения"],["они", "ᓭᔑᓭ", "Местоимения"],["этот", "⨿ʖᔑʖᔑ", "Местоимения"],
+  ["тот", "勹ᔑᒲ", "Местоимения"],["себя", "リᔑᒲ⚍", "Местоимения"],["свой", "〒￤┫￤", "Местоимения"],
+  ["кто-то", "⎓⟁ᓭ冫ᒷᒲꖌᔑ", "Местоимения"],["что-то", "〒￤⫛‖ᑑᒷ", "Местоимения"],["кто", "ʖ⚍ꖌフ", "Вопросительные"],
+  ["что", "ʖᒷリᒲ⟠ʖ￤", "Вопросительные"],["где", "〒￤∧フ", "Вопросительные"],["когда", "ᓭ⚍冫⟠リ⚍", "Вопросительные"],
+  ["почему", "⫛￤ᓭ⚍∧⟠", "Вопросительные"],["как", "ꖎ∋ʖ￤", "Вопросительные"],["сколько", "ᑑ⚍〒∋", "Вопросительные"],
+  ["какой", "冫ᒷ┫ᒷ", "Вопросительные"],["человек", "リᔑᒲ", "Люди"],["мужчина", "⍊⚍", "Люди"],
+  ["женщина", "⫛⟁∏ᔑ", "Люди"],["ребёнок", "∏ᒷ勹⍊⟁", "Люди"],["друг", "∏ᔑ∷フ", "Люди"],
+  ["семья", "ᓭᔑᒲᔑ", "Люди"],["мать", "ᓭ‖┫￤⎓⚍", "Люди"],["отец", "ꖌᒷᒲ∋∷‖", "Люди"],
+  ["брат", "ᒲ￤ꖌ⟁ꖌ∧∋", "Люди"],["сестра", "ʖ⚍勹ᓭᒷ", "Люди"],["бабушка", "ꖎフꖎᑑᔑ", "Люди"],
+  ["дедушка", "∧∋⫛ᔑ", "Люди"],["сын", "ᑑ⟠ꖎᔑꖎ〒⚍", "Люди"],["дочь", "⍊⟠ᓭ⟁", "Люди"],
+  ["муж", "┫ᒷᑑ⚍ᒲᒷ", "Люди"],["жена", "ᒲ⚍冫フᓭ⍊￤", "Люди"],["учитель", "ᒲᒷ勹￤ᓭリᔑᒲ", "Люди"],
+  ["работник", "∷ᔑʖリᔑᒲ", "Люди"],["врач", "ꖌ⟠∷ᔑ", "Люди"],["учёный", "∏⟁勹ᔑᑑフ", "Люди"],
+  ["художник", "ꖎ∋∏ᔑ勹⟠", "Люди"],["певец", "ʖ‖ꖌ⎓ᒷ", "Люди"],["герой", "勹∋∧￤", "Люди"],
+  ["враг", "∏￤ʖᒷ", "Люди"],["сосед", "ᑑᒷꖌ∷￤∴ᔑ", "Люди"],["гость", "ꖌフ〒∋", "Люди"],
+  ["справедливость", "ᓭ￤ꖌ⫛⟠", "Абстрактные"],["правда", "ᓭ‖ꖌ⚍ᓭ⟠", "Абстрактные"],["ложь", "ᓭ￤∧∋", "Абстрактные"],
+  ["свобода", "ᑑᒷ∷↸⟠", "Абстрактные"],["счастье", "リ⟠↸⟠勹ᔑ", "Абстрактные"],["любовь", "ʖᒷᓭ￤ꖌリᔑ", "Абстрактные"],
+  ["надежда", "∧‖∧ᒷꖌ￤", "Абстрактные"],["вера", "ʖ⚍∏⚍", "Абстрактные"],["добро", "∏⚍∷∧￤", "Абстрактные"],
+  ["зло", "∴⟠ꖎ∋", "Абстрактные"],["красота", "ꖌᒷ勹⟁", "Абстрактные"],["мудрость", "∷ᒷᓭ⟠", "Абстрактные"],
+  ["глупость", "冫∋∷フ∴⟠", "Абстрактные"],["сила", "ᑑ⚍〒⟁ꖌꖌフ", "Абстрактные"],["слабость", "ʖ⟠ᓭ‖", "Абстрактные"],
+  ["смелость", "ᑑ‖ᒲᑑ⚍", "Абстрактные"],["страх", "ʖ‖リ‖", "Абстрактные"],["радость", "∷ᒷ冫ᔑ", "Абстрактные"],
+  ["грусть", "ᑑ⟁∧￤∷⎓ᔑ", "Абстрактные"],["гнев", "ᑑᒷ⫛ᔑ", "Абстрактные"],["спокойствие", "ᒲ∋∴⟠", "Абстрактные"],
+  ["время", "↸ᒷ", "Абстрактные"],["жизнь", "∏⟁∷⎓⟁", "Абстрактные"],["смерть", "↸⟠⎓⚍勹ᒲᒷ", "Абстрактные"],
+  ["судьба", "ᓭ￤ꖌ‖⎓⚍", "Абстрактные"],["смысл", "⍊⟁", "Абстрактные"],["цель", "冫∋ᒲ∴‖ꖎ勹⟁", "Абстрактные"],
+  ["мечта", "ꖎᔑ⎓⚍", "Абстрактные"],["идея", "┫フ冫￤", "Абстрактные"],["мысль", "┫‖ᒲ↸⟠", "Абстрактные"],
+  ["память", "冫￤↸⟁", "Абстрактные"],["воля", "勹ᔑ冫ᔑ", "Абстрактные"],["честь", "∷⚍⎓⟠", "Абстрактные"],
+  ["совесть", "∏∋ꖎꖌᒷ", "Абстрактные"],["вина", "ᑑ￤勹⟠ꖎ⟁", "Абстрактные"],["стыд", "⎓⚍∏⚍", "Абстрактные"],
+  ["гордость", "∷‖ꖌ⚍", "Абстрактные"],["терпение", "∧⟠⎓⟁⍊‖", "Абстрактные"],["уважение", "勹⟁ᒲリᔑ", "Абстрактные"],
+  ["чувство", "ᑑ⟁ꖌ∋", "Чувства"],["настроение", "⍊フリᒲᒷ", "Чувства"],["улыбка", "ᒲ‖ᓭᒲᔑꖎꖎ‖", "Чувства"],
+  ["смех", "ꖌᔑ∴⟠", "Чувства"],["слёзы", "┫⟠⎓⚍", "Чувства"],["боль", "リフ∷ᒷ", "Чувства"],
+  ["скука", "∴￤∧⚍", "Чувства"],["интерес", "リ⚍冫⟁", "Чувства"],["усталость", "↸ᔑꖎ↸⚍∧￤", "Чувства"],
+  ["голод", "∏ᔑᓭ∏∋", "Чувства"],["жажда", "∷‖∴⟠", "Чувства"],["холод", "ᓭᔑʖ⟁", "Чувства"],
+  ["тепло", "勹⚍↸ᒷ勹‖", "Чувства"],["жалость", "ꖌ⟠⎓∋ᓭᔑ", "Чувства"],["зависть", "∷フ↸フ", "Чувства"],
+  ["ревность", "ꖎ∋↸ᒷ", "Чувства"],["нежность", "勹フ⍊⟠", "Чувства"],["восторг", "ᑑフリ‖ꖎ↸￤", "Чувства"],
+  ["удивление", "ᓭ∋ᒲ⚍", "Чувства"],["восхищение", "┫フ勹⍊⟁", "Чувства"],["спокойный", "ꖎフ⫛ᔑᑑ∋", "Чувства"],
+  ["тревога", "冫⟠ᓭ冫∋", "Чувства"],["уверенность", "ᒲ￤ᓭ┫￤↸∋", "Чувства"],["сомнение", "⍊⟠冫‖ᑑ￤", "Чувства"],
+  ["общество", "∧∋ꖌフ∴ᒷ", "Общество"],["народ", "ꖎ∋〒∋", "Общество"],["государство", "ʖ∋", "Общество"],
+  ["власть", "⎓⟠⫛ᒷ", "Общество"],["закон", "∴⚍リ⫛￤ᒲᒷ", "Общество"],["право", "リ‖リ⟠", "Общество"],
+  ["суд", "ᒲ⟁リフ", "Общество"],["судья", "ᓭᒷ⫛∋", "Общество"],["полиция", "ꖎ‖ꖎリᒷ", "Общество"],
+  ["армия", "ᒲ‖ꖎ⫛⟠", "Общество"],["война", "冫ᒷᓭᒲ⟁", "Общество"],["мир", "リᒷꖎᒷ", "Общество"],
+  ["договор", "ʖᔑ⫛⚍", "Общество"],["выборы", "ᑑᒷ", "Общество"],["партия", "ᒲᒷꖌ⍊⟁ꖎリ⚍", "Общество"],
+  ["президент", "∷フꖎリᔑ勹┫⟠", "Общество"],["министр", "⎓∋ᑑ⟠", "Общество"],["депутат", "ꖌ⚍ᑑᔑ∏⚍", "Общество"],
+  ["гражданин", "∧⟁勹∴￤∏⚍", "Общество"],["налог", "勹⟠勹ᔑ∧￤", "Общество"],["бюджет", "∷￤∏⚍", "Общество"],
+  ["экономика", "ᓭ⚍", "Общество"],["торговля", "ᑑ⟁⍊ᔑ", "Общество"],["деньги", "∏ᒷリ勹ᒷ", "Общество"],
+  ["цена", "ᒲᒷ冫フ", "Общество"],["рынок", "勹∋", "Общество"],["работа", "⫛∋ᑑᒷ", "Общество"],
+  ["зарплата", "⎓ᔑ", "Общество"],["образование", "ᓭ⟠ʖフ", "Общество"],["школа", "∴⚍ᑑᔑ勹ᒲ‖", "Общество"],
+  ["университет", "ᑑᒷʖ⚍", "Общество"],["наука", "ᑑフ", "Общество"],["искусство", "ᒲ‖ᒲ∏フᒲᓭ⚍", "Общество"],
+  ["культура", "ꖎ‖↸⟁ꖌ⚍", "Общество"],["религия", "∷‖ꖎᑑ‖", "Общество"],["церковь", "勹∋ᓭᑑ⚍", "Общество"],
+  ["традиция", "∧ᒷʖ‖", "Общество"],["обычай", "ᑑ⟠ᓭ∋∴‖", "Общество"],["праздник", "∧∋∧フ⫛∋", "Общество"],
+  ["история", "∴⟁⎓ᒷʖ⚍", "Общество"],["знание", "ᒲᔑᑑ￤↸‖", "Наука"],["опыт", "ᓭ‖ᓭ⟠ꖌᑑᔑ", "Наука"],
+  ["эксперимент", "ʖᔑ∴￤〒∋", "Наука"],["теория", "冫⟁勹リ⟠∧フ", "Наука"],["гипотеза", "∷ᒷꖌ⍊⚍", "Наука"],
+  ["закон природы", "∴ᔑꖎ∴‖ ∷⟁∷∷⟁↸‖", "Наука"],["формула", "ᒲ⟠↸￤ꖌ⍊⟠", "Наука"],["число", "ᓭ‖ᒲ⟁", "Наука"],
+  ["величина", "ʖ￤∷‖", "Наука"],["математика", "ꖎ￤リ⚍∷￤", "Наука"],["физика", "ᑑ⟠リᒷ", "Наука"],
+  ["химия", "∏ᒷ勹⟠ᓭ‖", "Наука"],["биология", "ʖᔑ┫∋", "Наука"],["астрономия", "〒‖∷ᒷリᒷ", "Наука"],
+  ["медицина", "⫛⟠∧⚍", "Наука"],["энергия", "⫛⚍〒⟁", "Наука"],["материя", "∧ᔑꖎ∷フ", "Наука"],
+  ["атом", "⍊‖ꖎ⟠", "Наука"],["молекула", "∴⚍∴ᔑ", "Наука"],["клетка", "∷⟠", "Наука"],
+  ["ген", "勹‖∏⚍⎓ᒷ", "Наука"],["эволюция", "ʖ⚍ᒲ┫⟠", "Наука"],["гравитация", "ꖎ￤∷∧‖∧‖", "Наука"],
+  ["свет", "ʖ⚍∷勹⚍", "Наука"],["звук", "∴フꖌ￤ʖ⟠", "Наука"],["электричество", "∧‖冫ᔑ⫛￤", "Наука"],
+  ["машина", "⎓⟠∴⟠∷￤", "Техника"],["компьютер", "┫⟁冫⟠", "Техника"],["телефон", "↸ᒷᓭᒷ", "Техника"],
+  ["интернет", "ꖎ⚍ᑑ⟠", "Техника"],["программа", "ᒲ∋ᓭ⟁", "Техника"],["робот", "⎓フ↸∋", "Техника"],
+  ["двигатель", "勹‖ꖌᒲ∋", "Техника"],["ракета", "┫￤ʖᒷ", "Техника"],["самолёт", "∴ᔑ┫⟁", "Техника"],
+  ["корабль", "⎓⚍┫￤", "Техника"],["поезд", "⍊ᒷ∷⟠", "Техника"],["велосипед", "⍊ᔑꖎ⍊フ", "Техника"],
+  ["инструмент", "∷⟁ʖ⟁", "Техника"],["механизм", "⎓‖〒ᔑ", "Техника"],["изобретение", "リ∋勹∏⟁リᔑ", "Техника"],
+  ["открытие", "⍊∋リ‖", "Техника"],["технология", "∏∋ꖎ⚍⍊フ", "Техника"],["измерение", "∷∋冫ᒷ", "Техника"],
+  ["вода", "⚍ꖎ", "Природа"],["огонь", "ʖᔑꖌᒲ⚍", "Природа"],["земля", "⎓フ⫛‖", "Природа"],
+  ["воздух", "ʖフ∏ᒷ", "Природа"],["солнце", "ᓭフꖎ", "Природа"],["луна", "ꖎ⚍リ", "Природа"],
+  ["звезда", "〒⟁ᓭ⟁冫ᒷ", "Природа"],["небо", "∧⟁ᓭ〒‖", "Природа"],["дерево", "⎓ᔑリ⟁", "Природа"],
+  ["трава", "ᓭᔑꖎ", "Природа"],["цветок", "∏フ〒⚍∏∋", "Природа"],["камень", "∴フᓭ冫￤", "Природа"],
+  ["река", "⍊⚍ᒲ⫛‖", "Природа"],["море", "ᒲフ∷ᔑ", "Природа"],["гора", "↸￤ꖎᔑ", "Природа"],
+  ["лес", "↸‖⍊￤", "Природа"],["поле", "∧‖∏∋", "Природа"],["озеро", "ꖌ￤ᓭᑑ⟠", "Природа"],
+  ["остров", "┫⟠リ￤", "Природа"],["берег", "ᑑᔑ冫￤ʖᔑ", "Природа"],["песок", "⎓∋ᒲ↸フ", "Природа"],
+  ["глина", "∷‖┫ᒷ", "Природа"],["облако", "ʖフ⍊∋", "Природа"],["дождь", "∷ᒷᒲ⚍⍊ᔑ", "Природа"],
+  ["снег", "⍊‖ꖎꖌ⟁", "Природа"],["ветер", "∷⟁ꖎ‖", "Природа"],["гроза", "ᓭ￤ꖎᒷ", "Природа"],
+  ["радуга", "冫￤↸⚍", "Природа"],["природа", "↸ᔑ⫛フ", "Природа"],["погода", "ᑑ⟁リᑑ‖", "Природа"],
+  ["корова", "ᒲᔑꖌᔑ", "Животные"],["собака", "ᑑ⚍冫⟁", "Животные"],["кошка", "⫛ᒷ⍊⟠ᓭ‖", "Животные"],
+  ["птица", "∏￤勹", "Животные"],["рыба", "⎓￤∴", "Животные"],["лошадь", "⫛フꖎᒷ", "Животные"],
+  ["волк", "⫛⟠ᑑ⟁", "Животные"],["медведь", "⫛￤ʖ⚍", "Животные"],["лиса", "∧￤ᒲᒲ⟠ʖ‖", "Животные"],
+  ["заяц", "∴ᔑ∧ᔑ⍊フ", "Животные"],["мышь", "┫∋", "Животные"],["слон", "ꖎ⟁ꖎ⎓∋", "Животные"],
+  ["тигр", "∏ᔑꖎᒷ", "Животные"],["лев", "ᒲ∋ꖌꖎ∋", "Животные"],["обезьяна", "ᒲ⟁ᓭ⫛⟁", "Животные"],
+  ["насекомое", "〒⟠∷∴￤", "Животные"],["пчела", "ꖌ⟠ᓭᒲフ", "Животные"],["паук", "⫛⟁⎓⚍", "Животные"],
+  ["змей", "ᒲ‖ᒲ‖", "Животные"],["птица-хищник", "ꖌ⟁ᒲ↸￤", "Животные"],["дом", "∷⚍ᒲ", "Быт"],
+  ["домик", "∷⚍ᒲ￤ꖌ", "Быт"],["дверь", "⫛フ∴￤⍊ᒷ", "Быт"],["окно", "リ⚍∧⟁∧￤", "Быт"],
+  ["стол", "ꖌᔑ⍊‖", "Быт"],["стул", "↸ᔑʖ‖", "Быт"],["кровать", "ʖ￤ᓭᑑᔑ", "Быт"],
+  ["хлеб", "ʖᔑꖌ", "Быт"],["мясо", "ᒲᔑᓭ", "Быт"],["молоко", "ꖌ⚍勹フ↸ᒷ", "Быт"],
+  ["еда", "ᑑᔑ〒‖", "Быт"],["одежда", "ꖌ⟁ᓭ∋⫛‖", "Быт"],["книга", "ꖌリ￤┫", "Быт"],
+  ["дорога", "ꖎᔑリ∋", "Быт"],["город", "⫛￤ᒲ∋", "Быт"],["страна", "ꖌ‖∷ꖌ‖", "Быт"],
+  ["деревня", "リ￤勹ᔑ", "Быт"],["улица", "冫‖〒フ", "Быт"],["площадь", "┫‖勹⚍勹⟁", "Быт"],
+  ["магазин", "∧⟠ꖌ⚍", "Быт"],["больница", "勹ᒷ∷￤⎓⟁", "Быт"],["вокзал", "ᓭᒷꖌꖎ∋", "Быт"],
+  ["мост", "∷‖ᑑ⟠", "Быт"],["сад", "∴‖勹‖", "Быт"],["двор", "⍊∋⫛￤", "Быт"],
+  ["комната", "┫⟁∧‖", "Быт"],["кухня", "ꖌ⟁ꖌ〒∋", "Быт"],["ванная", "勹⟠リᔑ", "Быт"],
+  ["крыша", "⫛⟠勹ᔑ", "Быт"],["стена", "ᓭᒷリ⎓フ", "Быт"],["пол", "ᒲ￤ᓭ⟠", "Быт"],
+  ["потолок", "⫛ᔑ∴⟠", "Быт"],["ключ", "ʖ‖∷ʖフ", "Быт"],["пить", "∏フꖌ", "Глаголы"],
+  ["есть", "∷ᒷꖌ", "Глаголы"],["спать", "ᓭꖎᒷ∏", "Глаголы"],["идти", "⚍ꖌ", "Глаголы"],
+  ["бежать", "∷⚍リ", "Глаголы"],["видеть", "⍊ᔑ￤", "Глаголы"],["слышать", "ꖎフリᒷ∷", "Глаголы"],
+  ["говорить", "勹ᔑꖎ", "Глаголы"],["знать", "∧ᔑリ", "Глаголы"],["думать", "リᔑ冫￤勹", "Глаголы"],
+  ["хотеть", "冫フ勹", "Глаголы"],["мочь", "ᒲフ┫", "Глаголы"],["делать", "ꖎフᒲ", "Глаголы"],
+  ["давать", "∏⚍冫⚍ꖌ", "Глаголы"],["брать", "↸‖ꖌ", "Глаголы"],["любить", "ꖎ⚍ʖ", "Глаголы"],
+  ["жить", "⋮￤⍊", "Глаголы"],["умирать", "∷‖∴￤ꖎ", "Глаголы"],["работать", "∷ᔑʖ", "Глаголы"],
+  ["учиться", "ᒲᒷ勹￤ᓭ", "Глаголы"],["играть", "勹ᒷ┫‖ᓭ", "Глаголы"],["писать", "∏￤ᓭ", "Глаголы"],
+  ["читать", "〒￤勹", "Глаголы"],["петь", "リ⟠〒⟁∷", "Глаголы"],["плавать", "⫛￤リ", "Глаголы"],
+  ["стоять", "┫∋ᓭ￤ᓭ", "Глаголы"],["сидеть", "ᓭ￤ꖌ", "Глаголы"],["открывать", "ʖᔑ勹", "Глаголы"],
+  ["закрывать", "∷⟁勹", "Глаголы"],["покупать", "∴⟁⍊‖ꖎ", "Глаголы"],["продавать", "ʖ‖∷", "Глаголы"],
+  ["строить", "ᑑフᓭ", "Глаголы"],["разрушать", "⍊‖ᓭ", "Глаголы"],["искать", "⍊⟁┫ᒷꖎ", "Глаголы"],
+  ["находить", "ʖフ∴⚍勹", "Глаголы"],["терять", "⍊⟠ᒲ", "Глаголы"],["помогать", "冫‖ꖎ", "Глаголы"],
+  ["мешать", "ʖ￤ᓭフリ", "Глаголы"],["ждать", "ꖎフリ", "Глаголы"],["встречать", "∷‖ᓭ", "Глаголы"],
+  ["провожать", "ᓭフ冫⟠ᒲ", "Глаголы"],["спрашивать", "ᑑ‖ʖ￤∷", "Глаголы"],["отвечать", "⍊フᒲ", "Глаголы"],
+  ["объяснять", "∴ᔑᓭ", "Глаголы"],["понимать", "⫛‖ᒲ", "Глаголы"],["забывать", "↸フᓭ", "Глаголы"],
+  ["вспоминать", "ᑑ⟠冫ᔑꖎ", "Глаголы"],["решать", "⎓￤∷", "Глаголы"],["выбирать", "ᓭ‖リ", "Глаголы"],
+  ["менять", "ꖎ‖ꖌᒷᓭ", "Глаголы"],["начинать", "ꖎ‖ꖎ", "Глаголы"],["заканчивать", "ᑑ⟠勹", "Глаголы"],
+  ["продолжать", "⫛⟠勹‖ᓭ", "Глаголы"],["показывать", "┫フᒲ", "Глаголы"],["скрывать", "∏∋∏ᒷꖌ", "Глаголы"],
+  ["смотреть", "勹‖∷", "Глаголы"],["слушать", "ꖎ∋∷", "Глаголы"],["касаться", "ᑑフꖎ", "Глаголы"],
+  ["держать", "∴⚍勹⟠ꖎ", "Глаголы"],["бросать", "∏ᒷʖフꖎ", "Глаголы"],["ловить", "勹⟁ᓭ", "Глаголы"],
+  ["нести", "↸⟠∴∋∷", "Глаголы"],["везти", "冫フ〒⟁ᓭ", "Глаголы"],["летать", "⨿ʖᔑʖフ", "Глаголы"],
+  ["прыгать", "⍊‖ᒲ", "Глаголы"],["падать", "⍊ᔑꖌ", "Глаголы"],["поднимать", "⍊⚍ꖎᔑリ", "Глаголы"],
+  ["опускать", "ᓭᒷꖌ⟠ᓭ", "Глаголы"],["смеяться", "∷⚍ꖌ", "Глаголы"],["плакать", "┫∋勹￤∷", "Глаголы"],
+  ["улыбаться", "勹⟠ꖌ", "Глаголы"],["бояться", "⫛∋ꖌ", "Глаголы"],["надеяться", "リ∋∷", "Глаголы"],
+  ["верить", "勹⚍⫛∋ꖎ", "Глаголы"],["сомневаться", "∏⟠リ", "Глаголы"],["уважать", "〒∋ʖ‖ᒲ", "Глаголы"],
+  ["завидовать", "〒⟠ᒲ", "Глаголы"],["прощать", "ꖎ⚍∷フリ", "Глаголы"],["благодарить", "冫∋冫ᒷꖎ", "Глаголы"],
+  ["приветствовать", "⫛∋∷", "Глаголы"],["поздравлять", "ʖᔑ∷", "Глаголы"],["большой", "ʖᔑꖎ", "Прилагательные"],
+  ["маленький", "ᒲ￤リ", "Прилагательные"],["хороший", "ꖎᔑ", "Прилагательные"],["плохой", "リᒷꖎᔑ", "Прилагательные"],
+  ["новый", "∴⟠勹∧ᔑ", "Прилагательные"],["старый", "冫ᔑꖎꖌ⟁", "Прилагательные"],["горячий", "ʖᔑᒲᒷ", "Прилагательные"],
+  ["холодный", "ꖎ‖⍊⟁", "Прилагательные"],["быстрый", "⫛⚍∷ᓭ⟠", "Прилагательные"],["медленный", "リ‖", "Прилагательные"],
+  ["красный", "∴⟠⍊‖ʖ‖", "Прилагательные"],["синий", "ʖꖎ⚍", "Прилагательные"],["зелёный", "冫∋ꖎ⫛フリ⟁", "Прилагательные"],
+  ["белый", "∴∋⫛ᒷꖎᒷ", "Прилагательные"],["чёрный", "∏∋ᒲᔑ", "Прилагательные"],["жёлтый", "↸フᓭᑑ‖勹リ￤", "Прилагательные"],
+  ["светлый", "ꖌ⟠∷∷フꖎ∋", "Прилагательные"],["тёмный", "〒∋ʖ∋", "Прилагательные"],["добрый", "冫‖", "Прилагательные"],
+  ["сильный", "∏∋∏⟁", "Прилагательные"],["слабый", "〒⚍∧ᒷリ┫ᒷ", "Прилагательные"],["умный", "ꖌᔑᒲ∋", "Прилагательные"],
+  ["глупый", "冫フ↸⚍", "Прилагательные"],["красивый", "ꖎ‖ᒲꖌ∋", "Прилагательные"],["уродливый", "ʖᔑ↸⟁", "Прилагательные"],
+  ["богатый", "ʖ⟠∏‖", "Прилагательные"],["бедный", "⍊⟁ᒲꖎ‖⫛￤", "Прилагательные"],["счастливый", "〒⚍ʖ⚍", "Прилагательные"],
+  ["грустный", "⫛ᒷ勹ᓭᔑ", "Прилагательные"],["весёлый", "∴⚍〒⟠", "Прилагательные"],["тревожный", "〒ᔑ∏ᒷ", "Прилагательные"],
+  ["смелый", "∴⟠┫‖", "Прилагательные"],["трусливый", "∧∋ꖎ┫∋", "Прилагательные"],["честный", "ʖᔑリᒲ￤", "Прилагательные"],
+  ["лживый", "∴ᔑʖ∋", "Прилагательные"],["справедливый", "ᓭ⟠⫛⟁", "Прилагательные"],["несправедливый", "冫￤ʖ￤", "Прилагательные"],
+  ["свободный", "↸⟠〒フ", "Прилагательные"],["важный", "∏⟁↸‖⫛￤", "Прилагательные"],["простой", "∏⚍⍊∋", "Прилагательные"],
+  ["сложный", "リᔑᒲ∷⟁", "Прилагательные"],["точный", "ᑑ‖∷フ", "Прилагательные"],["главный", "∴ᔑꖌリフ∴∋", "Прилагательные"],
+  ["разный", "ᑑ⟁リリᒷ⍊⟠", "Прилагательные"],["одинаковый", "┫フ∧ᔑ⫛フ", "Прилагательные"],["один", "ꖎ⟠ꖎ∋∏フ", "Числа"],
+  ["два", "ꖎ⟁⫛￤", "Числа"],["три", "⎓⟠勹フ", "Числа"],["четыре", "⍊⟁↸フ⍊ᔑ", "Числа"],
+  ["пять", "⎓⟠ᒲ勹フꖌ⚍", "Числа"],["шесть", "勹フ勹‖", "Числа"],["семь", "〒ᔑᓭ∷ᒷ勹ᑑ⟠", "Числа"],
+  ["восемь", "┫∋ᓭʖᒷ", "Числа"],["девять", "冫⚍∷⟁", "Числа"],["десять", "⫛⟠ᑑ∋", "Числа"],
+  ["двадцать", "ꖎ⟁⫛￤⫛⟠ᑑ∋", "Числа"],["сто", "ᑑ￤", "Числа"],["тысяча", "∷⟁ᓭ〒⟁", "Числа"],
+  ["миллион", "ʖ￤┫⟁", "Числа"],["первый", "ꖎ⟠ꖎ∋∏フ勹ᔑ", "Числа"],["второй", "ꖎ⟁⫛￤勹ᔑ", "Числа"],
+  ["сегодня", "ᑑᒷᓭꖎ￤", "Время"],["завтра", "ꖌ⚍⎓∋∷￤", "Время"],["вчера", "ᑑ⚍ᒲ￤∴フ", "Время"],
+  ["день", "∏￤冫ᔑ∧￤", "Время"],["ночь", "∧⚍┫⚍", "Время"],["год", "ꖌ‖∧‖", "Время"],
+  ["час", "∧フꖌ〒ᔑ⎓￤", "Время"],["минута", "リᔑᓭ冫フ↸ᒷ", "Время"],["секунда", "⍊∋ᑑ⚍", "Время"],
+  ["неделя", "リᒷ∷￤", "Время"],["месяц", "∷⚍勹∋", "Время"],["век", "リ⟠∧⟁∧フ", "Время"],
+  ["утро", "ʖᔑᓭ勹‖", "Время"],["вечер", "∧ᒷᒲ∷￤∏￤", "Время"],["полдень", "∏⟁リ┫⟠", "Время"],
+  ["полночь", "⍊ᒷ⫛ᔑ", "Время"],["весна", "リ￤ᑑ⟠〒フ", "Время"],["лето", "ᑑ⚍ᑑフ", "Время"],
+  ["осень", "∷∋リᒷ", "Время"],["зима", "ᓭ⟁勹￤", "Время"],["прошлое", "∧⟠ʖᔑꖎᓭ⟠", "Время"],
+  ["будущее", "ᓭᔑ勹‖", "Время"],["здесь", "┫ᔑ〒⟠", "Служебные"],["там", "↸⟁⎓‖∧ᔑ", "Служебные"],
+  ["и", "勹ᔑ", "Служебные"],["или", "￤ꖎ", "Служебные"],["не", "リᒷ", "Служебные"],
+  ["в", "￤リ", "Служебные"],["к", "⎓⚍⫛⟠", "Служебные"],["из", "∏∋リフリフ", "Служебные"],
+  ["на", "リᔑ", "Служебные"],["с", "ᒲᒷ⫛⟁", "Служебные"],["очень", "フ〒", "Служебные"],
+  ["тоже", "勹フ⋮", "Служебные"],["но", "┫ᒷ", "Служебные"],["если", "↸‖┫ᒷ", "Служебные"],
+  ["потому", "⍊∋┫⟠", "Служебные"],["около", "⍊￤┫ᔑ", "Служебные"],["между", "∷⚍〒‖", "Служебные"],
+  ["после", "∷￤ᒲᓭ￤", "Служебные"],["до", "↸フ", "Служебные"],["через", "┫⟁ʖᒷ", "Служебные"],
+  ["без", "ꖌᔑʖ⟠", "Служебные"],["для", "↸ꖎ⋮ᔑ", "Служебные"],["про", "∏∷フ", "Служебные"],
+  ["над", "リᔑ↸", "Служебные"],["под", "∏フ↸", "Служебные"],["за", "∧ᔑ", "Служебные"],
+  ["перед", "冫ᔑʖᒷ", "Служебные"],["кстати", "ꖎフ┫⟁", "Служебные"],["Кирилл", "ꖌ￤∷￤ꖎꖎ", "Имена"],
+  ["Мара", "ᒲᔑ∷ᔑ", "Имена"],["Анна", "ᔑリリᔑ", "Имена"],["Иван", "￤⍊ᔑリ", "Имена"],
+  ["Пётр", "∏⸚勹∷", "Имена"],["Мария", "ᒲᔑ∷￤⋮ᔑ", "Имена"],["Алексей", "ᔑꖎᒷꖌᓭᒷ⋮", "Имена"],
+  ["София", "ᓭフ⎓￤⋮ᔑ", "Имена"],["Робlox", "∷フʖꖎフꖌᓭ", "Имена"],["MANFACE", "ᒲᔑリ⎓ᔑᑑᒷ", "Имена"],
+  ["Альбатрос", "ᔑꖎʖᔑ勹∷フᓭ", "Имена"],["имя", "リフᒲ", "Абстрактные"],["быть", "┫ᒷꖌ⟁リ", "Глаголы"],
+  ["доброта", "ꖎᔑフᓭ勹", "Абстрактные"],["Альбатросия", "ᔑꖎʖᔑ勹∷フᓭ⚍ᒲᔑ", "Альбатрос"],["альбатросский", "ᔑꖎʖᔑ勹∷フᓭᒷ冫", "Альбатрос"],
+  ["альбатросец", "ᔑꖎʖᔑ勹∷フᓭリᔑᒲ", "Альбатрос"],["Альбатроссианский", "ᔑꖎʖᔑ勹∷フ∷ᓭᓭ￤ᔑリ", "Альбатрос"],["яблоко", "⫛￤勹ᓭ‖", "Еда"],
+  ["груша", "↸ᒷ冫⟁", "Еда"],["виноград", "ʖ∋リ∴ᔑ冫⟠", "Еда"],["банан", "ꖎᔑ┫￤⍊フ", "Еда"],
+  ["апельсин", "⎓∋ᓭ⚍", "Еда"],["лимон", "⍊⟠ᒲ∴‖", "Еда"],["вишня", "リフ⫛ᒷ", "Еда"],
+  ["малина", "ᑑᔑ∷ᑑᔑ", "Еда"],["клубника", "∴⚍ꖌフᑑ⚍", "Еда"],["арбуз", "┫ᒷリᑑ⟠", "Еда"],
+  ["картошка", "∧⟁ꖎ⟠", "Еда"],["морковь", "⎓ᒷ↸￤∷⟠", "Еда"],["капуста", "ꖎ‖ᒲ⟠", "Еда"],
+  ["лук", "∧ᒷ⫛￤", "Еда"],["чеснок", "ꖌ‖∴ᒷᓭフ", "Еда"],["помидор", "⫛ᒷᓭ⚍", "Еда"],
+  ["огурец", "リ⟠ꖎᔑ∏ᔑ", "Еда"],["гриб", "勹ᔑꖌ⟠ꖎ⫛フ", "Еда"],["орех", "勹ᒷ勹⟠", "Еда"],
+  ["мёд", "ꖌ￤リ￤ʖフ", "Еда"],["сахар", "勹∋∴∋", "Еда"],["соль", "冫ᔑ⫛⟁", "Еда"],
+  ["перец", "ʖ￤リ↸⟠", "Еда"],["масло", "⍊ᔑᓭフᑑ￤", "Еда"],["сыр", "∷⟠ᓭ⟁", "Еда"],
+  ["яйцо", "ᒲ⚍ꖎフ⎓⟁", "Еда"],["суп", "⍊￤∴⟁", "Еда"],["каша", "勹‖∷フᒲ‖", "Еда"],
+  ["рис", "⍊フᓭ⚍", "Еда"],["мука", "┫⟁⎓￤", "Еда"],["пирог", "ꖎ⚍∷⟁ᑑ⟠", "Еда"],
+  ["торт", "ᑑ∋∏ᔑ⎓⟠", "Еда"],["конфета", "∴ᔑꖎᔑ∷↸⚍", "Еда"],["шоколад", "↸フꖎ┫‖リ〒￤", "Еда"],
+  ["чай", "↸￤ꖌ∋", "Еда"],["кофе", "ʖフリ‖", "Еда"],["сок", "↸フ〒∋", "Еда"],
+  ["пиво", "ᓭ⚍ꖎ⟁", "Еда"],["вино", "┫⚍ꖎᑑ⟠", "Еда"],["колбаса", "⫛ᔑ↸‖", "Еда"],
+  ["ужин", "⎓⟁ᓭフ", "Еда"],["обед", "ᒲ⟁↸ᔑ", "Еда"],["завтрак", "┫ᒷ∷⟁", "Еда"],
+  ["тарелка", "ᒲ⟠ᓭ∧⟁", "Еда"],["ложка", "冫フᒲリ⚍∷ᒷ", "Еда"],["вилка", "∏⚍〒ᒷ", "Еда"],
+  ["нож", "∴ᔑꖎ⟁", "Еда"],["чашка", "冫ᒷ┫フ", "Еда"],["бутылка", "ʖᒷリ⚍", "Еда"],
+  ["кастрюля", "┫フ∷ᓭ⟠", "Еда"],["сковорода", "ꖎフ∴フ", "Еда"],["голова", "⎓⟁ꖌ⫛ᒷᒲフ", "Тело"],
+  ["лицо", "勹ᔑ∷↸ᔑ", "Тело"],["глаз", "ʖ￤ꖌ∏‖", "Тело"],["ухо", "ꖎ‖ᒲ∋", "Тело"],
+  ["нос", "ᒲ‖↸∋", "Тело"],["рот", "冫⟁∧∋", "Тело"],["зуб", "┫￤ʖ⚍", "Тело"],
+  ["язык", "⫛フʖᔑ勹冫フ", "Тело"],["губа", "ᒲ⟁∏⚍", "Тело"],["шея", "ʖ‖⍊￤", "Тело"],
+  ["плечо", "↸⚍⍊ᒷ", "Тело"],["рука", "┫⟠⎓⟁", "Тело"],["палец", "ᑑ￤↸￤", "Тело"],
+  ["ладонь", "⍊⚍ᒲ⟁", "Тело"],["грудь", "ʖ‖∏ᒷᒲ⚍", "Тело"],["спина", "ꖌ⟁勹∏ᔑ", "Тело"],
+  ["живот", "⍊ᔑ勹ᒷ", "Тело"],["нога", "ᓭ⚍〒∋∴ᒷ", "Тело"],["колено", "⎓⚍⫛⟠ᑑᒷ", "Тело"],
+  ["ступня", "⎓⚍勹⚍∷⟠", "Тело"],["сердце", "∏ᔑ⫛ᒷ∧ᒷ", "Тело"],["кровь", "ꖌ￤ꖎʖ⚍", "Тело"],
+  ["кость", "┫フ⎓⚍", "Тело"],["кожа", "∧⚍勹⚍∴ᒷ", "Тело"],["волос", "ᑑフ┫⟠⍊⟁", "Тело"],
+  ["борода", "勹￤ᓭ⍊フ", "Тело"],["лоб", "⫛⟁∷⟠", "Тело"],["щека", "ʖ∋⎓⚍", "Тело"],
+  ["бровь", "⍊⚍⫛⟁", "Тело"],["дыхание", "∧ᒷ⎓⚍⎓‖", "Тело"],["голос", "↸ᔑ∷ᓭ⟠", "Тело"],
+  ["рубашка", "ꖎ⟁〒￤", "Одежда"],["штаны", "∷‖ꖌ∋", "Одежда"],["юбка", "ʖ⟠⍊⟠", "Одежда"],
+  ["платье", "〒∋ꖎ⟠", "Одежда"],["куртка", "ᓭ‖ꖌリᒷ", "Одежда"],["пальто", "⍊フ", "Одежда"],
+  ["шапка", "ᓭフ", "Одежда"],["шарф", "⍊⟁∧フ", "Одежда"],["перчатка", "冫ᔑ冫⚍勹フ", "Одежда"],
+  ["ботинок", "ꖌ‖⎓ᔑꖌ↸フ", "Одежда"],["носок", "冫⟁〒⟠", "Одежда"],["пояс", "⎓∋ꖌᒷ", "Одежда"],
+  ["карман", "┫‖∴⚍", "Одежда"],["сумка", "∴ᒷ∷ᓭ￤", "Одежда"],["зонт", "ᓭᔑꖌ↸ᒷ", "Одежда"],
+  ["очки", "⍊⚍ꖌᓭフ", "Одежда"],["кольцо", "勹⟠∷勹ᒷᓭᒷ", "Одежда"],["часы", "⍊‖⍊⟁⫛⚍", "Одежда"],
+  ["ткань", "∴￤┫フ", "Одежда"],["нитка", "↸∋ꖌᒷ", "Одежда"],["игла", "⍊ᒷ∷‖", "Одежда"],
+  ["повар", "∏⚍∴∋", "Профессии"],["пекарь", "∷⟁ᓭ‖", "Профессии"],["строитель", "⎓ᔑ∷∴フʖフ", "Профессии"],
+  ["кузнец", "∷ᒷᓭ‖ꖌᒷ", "Профессии"],["рыбак", "ᑑ⟠↸⟠", "Профессии"],["охотник", "⫛∋リ∷ᒷ⫛⟠", "Профессии"],
+  ["пастух", "冫ᔑ勹∴ᒷ", "Профессии"],["фермер", "ᒲ‖冫￤", "Профессии"],["торговец", "〒∋∏￤", "Профессии"],
+  ["моряк", "リフ↸￤", "Профессии"],["солдат", "ꖎᒷ勹冫ᔑ", "Профессии"],["капитан", "⫛∋∏⟁", "Профессии"],
+  ["король", "∴フ∧⟠ᒲ∧⟠", "Профессии"],["королева", "ᓭᔑꖎᔑ↸￤", "Профессии"],["принц", "∧フꖎ⟠ꖎフ", "Профессии"],
+  ["слуга", "∷‖↸⟠リᒲ∋", "Профессии"],["вор", "ᒲ⟁ꖌ∴⟠", "Профессии"],["нищий", "ᒲフリᓭ⟁", "Профессии"],
+  ["поэт", "┫⟠ꖎꖎ⟁", "Профессии"],["писатель", "⫛ᔑ⎓ᒷ", "Профессии"],["музыкант", "ᓭ⟠ꖌᔑ", "Профессии"],
+  ["танцор", "∴ᒷ↸ᔑ", "Профессии"],["актёр", "勹ᒷꖎ∏ᔑꖌ⟁", "Профессии"],["инженер", "∏⟠⍊⚍", "Профессии"],
+  ["программист", "⍊ᔑꖎ‖", "Профессии"],["пилот", "∴⟠ꖌ∋", "Профессии"],["водитель", "∷⚍ʖᒷ", "Профессии"],
+  ["плотник", "ʖ‖ꖎ⟁", "Профессии"],["сапожник", "∴⚍∏⟠ʖᒷ", "Профессии"],["портной", "ꖎ￤リ⟠ꖌ⟁", "Профессии"],
+  ["шофёр", "∴‖ᒲ‖ᑑ￤", "Профессии"],["писарь", "∧‖ᒲ⎓‖", "Профессии"],["мудрец", "⎓⚍∧‖リ⍊ᒷ", "Профессии"],
+  ["жрец", "ᒲ⟠リリᔑ", "Профессии"],["площадка", "ᒲ‖〒￤ᒲᓭ∋", "Места"],["порт", "⎓⚍〒⟁", "Места"],
+  ["пристань", "勹⟁ᒲ冫⚍勹┫￤", "Места"],["башня", "∧フ", "Места"],["замок", "ꖎᔑ∴⚍勹∋", "Места"],
+  ["дворец", "リ⟠ᑑ‖┫⟠", "Места"],["храм", "∴ᔑᑑフ∷ꖌᒷ", "Места"],["могила", "ꖎフʖ⟁", "Места"],
+  ["пещера", "ᓭ‖┫⟠┫⟁", "Места"],["пустыня", "⍊⟁ꖎᔑꖎ∷フ", "Места"],["джунгли", "リ‖∏⟠", "Места"],
+  ["долина", "⍊ᔑꖎ∧∋", "Места"],["холм", "⍊ᒷ冫⟁", "Места"],["утёс", "⎓∋ꖎꖎ⟁ꖌᒲフ", "Места"],
+  ["водопад", "┫⚍ᒲ勹⚍", "Места"],["болото", "ᑑフ⎓⚍", "Места"],["залив", "ʖ⚍ꖎᓭ‖", "Места"],
+  ["пролив", "┫￤ꖎ┫⟠", "Места"],["континент", "⍊⚍勹フ冫⟠", "Места"],["столица", "∷ᒷ↸⚍", "Места"],
+  ["граница", "⎓ᒷ⫛￤", "Места"],["деревенька", "ꖎ∋⫛ᔑ勹⟁", "Места"],["хутор", "∷‖ᓭ⎓‖", "Места"],
+  ["лавка", "ꖎ￤∏￤", "Места"],["пекарня", "∏⟁勹ᒷᒲ┫⚍", "Места"],["библиотека", "⎓⟁ꖌꖎ⟁", "Места"],
+  ["театр", "ᑑ⟠┫∋∷勹⚍", "Места"],["музей", "ᑑᒷᒲフ", "Места"],["стадион", "リ⚍∷∴⟠", "Места"],
+  ["аптека", "勹フ冫⟁", "Места"],["банк", "ꖌ⟁⫛ᔑ", "Места"],["гостиница", "∏ᒷᑑ⟁", "Места"],
+  ["казарма", "冫⟠⫛⟠ᓭ∋", "Места"],["тюрьма", "∏⟠⫛∋ꖌ∋", "Места"],["ведро", "ʖᒷᒲ∋", "Предметы"],
+  ["верёвка", "∧⚍⫛フ", "Предметы"],["молоток", "リ⟁ᑑ∋", "Предметы"],["топор", "∷ᒷ∷┫⟁", "Предметы"],
+  ["лопата", "⎓∋∴‖", "Предметы"],["пила", "ꖌ⟁⫛⚍ᓭʖ⟠", "Предметы"],["гвоздь", "ʖ∋勹∋〒∋", "Предметы"],
+  ["колесо", "ᑑ⟠〒⚍", "Предметы"],["лодка", "∴ᔑ〒ᔑ", "Предметы"],["парус", "勹￤⫛‖", "Предметы"],
+  ["якорь", "ꖌ∋ᒲ⍊⟠", "Предметы"],["сеть", "〒フ勹フ", "Предметы"],["лампа", "勹フ⎓ᔑ", "Предметы"],
+  ["свеча", "∴￤ʖᔑ", "Предметы"],["зеркало", "⫛∋∴⟁ꖎ￤", "Предметы"],["ковёр", "ᑑ⟁⫛⚍", "Предметы"],
+  ["подушка", "ᒲᒷ勹ᒷ", "Предметы"],["одеяло", "リ⚍∷￤", "Предметы"],["шкаф", "∏⟁ᓭ∴‖", "Предметы"],
+  ["полка", "┫∋ᑑ￤", "Предметы"],["корзина", "⍊⚍ꖌᒲ‖∷ꖎ⟠", "Предметы"],["коробка", "∴ᒷ┫∋", "Предметы"],
+  ["мешок", "ᑑ￤∷ᒷ", "Предметы"],["мяч", "冫⟁勹ᔑ∷〒⟠", "Предметы"],["игрушка", "〒∋ꖌフ∧ᒷ", "Предметы"],
+  ["карта", "⫛フᒲ∋勹勹⟠", "Предметы"],["письмо", "∴フ〒⟁", "Предметы"],["монета", "ꖎ⟠勹∏￤⎓⟠", "Предметы"],
+  ["флаг", "〒‖勹⟁", "Предметы"],["меч", "⫛⟁ꖎ￤", "Предметы"],["щит", "冫ᔑ∷冫フ∏⚍", "Предметы"],
+  ["стрела", "↸ᒷꖌ∴∋⎓ᒷ", "Предметы"],["копьё", "┫∋┫⟠", "Предметы"],["корона", "ᓭ⟁ʖフ勹ᔑ", "Предметы"],
+  ["цепь", "⍊ᔑ冫‖", "Предметы"],["бумага", "ᓭフ∏⟠", "Предметы"],["ручка", "∏∋リᒷ∧フ", "Предметы"],
+  ["чернила", "ᒲ⟠ꖎ〒ᒷ", "Предметы"],["краска", "↸‖勹ᒷ", "Предметы"],["кисть", "⎓⟠∷┫ᔑᑑ‖", "Предметы"],
+  ["картина", "∏⚍∏∋ʖᔑ", "Предметы"],["фотография", "┫￤↸∋∧∋", "Предметы"],["музыка", "∴ᒷ⍊‖", "Предметы"],
+  ["барабан", "〒ᒷᓭʖ￤ꖎ‖", "Предметы"],["флейта", "┫フ↸‖⎓￤", "Предметы"],["гитара", "リᔑ⍊∋", "Предметы"],
+  ["роза", "リ￤ᒲ冫ᔑ", "Растения и животные"],["куст", "∏フ∏⟁", "Растения и животные"],["ветка", "↸⚍⍊⟁勹↸ᔑ", "Растения и животные"],
+  ["корень", "ʖ⟠", "Растения и животные"],["лист", "∴ᔑ〒⟠ꖎ⟁", "Растения и животные"],["семя", "∧⟠↸⚍∴⟠", "Растения и животные"],
+  ["плод", "∷∋", "Растения и животные"],["цветник", "⍊ᔑ∏￤", "Растения и животные"],["дуб", "リ￤⎓⟁", "Растения и животные"],
+  ["сосна", "〒ᔑᑑᔑ", "Растения и животные"],["берёза", "∏‖ᓭ〒⟠∧⟁", "Растения и животные"],["пальма", "〒ᔑʖ⟁ᒲᓭ⟁", "Растения и животные"],
+  ["мох", "∧⟁ꖌ⟠", "Растения и животные"],["овца", "〒⟠ꖌ￤⍊∋", "Растения и животные"],["коза", "ʖᔑꖌ⚍", "Растения и животные"],
+  ["свинья", "⫛⟠ᓭ⟠", "Растения и животные"],["курица", "⎓⚍勹⚍ᓭ┫⚍", "Растения и животные"],["петух", "∏⚍ᒲ‖", "Растения и животные"],
+  ["утка", "∏∋ꖌ∋", "Растения и животные"],["гусь", "∏ᒷꖎᑑフ∏‖", "Растения и животные"],["голубь", "ᑑᒷ⎓ᔑꖌ勹⟠", "Растения и животные"],
+  ["орёл", "ᒲᒷ∏⟠", "Растения и животные"],["сова", "ᑑ⟁〒ᔑꖌ∋", "Растения и животные"],["ворона", "↸⟁ᑑ￤", "Растения и животные"],
+  ["ласточка", "∷∋ꖌ∏⚍", "Растения и животные"],["лягушка", "リ⟁〒⟠", "Растения и животные"],["черепаха", "↸￤ꖎフ", "Растения и животные"],
+  ["крокодил", "↸⟁⎓⟠", "Растения и животные"],["кролик", "ᒲᒷ↸⚍", "Растения и животные"],["олень", "↸￤ꖌ∷⟠", "Растения и животные"],
+  ["кабан", "⫛∋リᓭ∋", "Растения и животные"],["барсук", "┫ᔑ勹ᒷ", "Растения и животные"],["белка", "↸ᒷ〒ᔑ勹ʖ⚍", "Растения и животные"],
+  ["ёж", "∏∋ꖎ┫⟠", "Растения и животные"],["верблюд", "〒ᒷ∷ᒷ", "Растения и животные"],["обезьянка", "∴ᒷ∴￤┫⚍", "Растения и животные"],
+  ["дельфин", "リ⟠勹⟠∧‖", "Растения и животные"],["кит", "∧⟠↸ᔑ∷∋", "Растения и животные"],["акула", "ᒲ‖┫ᔑ∷┫∋", "Растения и животные"],
+  ["краб", "∧⟁勹ʖᔑ", "Растения и животные"],["ящерица", "〒∋∏ᒷ", "Растения и животные"],["червь", "ᑑ⟁┫∋", "Растения и животные"],
+  ["муравей", "↸フꖎ⟁", "Растения и животные"],["комар", "〒￤⍊⟁", "Растения и животные"],["бабочка", "ᒲᔑꖎ⟠", "Растения и животные"],
+  ["муха", "ᑑフ∧⟁", "Растения и животные"],["жук", "勹ᒷ∏‖", "Растения и животные"],["бить", "∷⟠勹", "Глаголы"],
+  ["толкать", "勹⟠↸⟠ᓭ", "Глаголы"],["тянуть", "∏⚍∷", "Глаголы"],["резать", "┫⟁ʖフꖎ", "Глаголы"],
+  ["варить", "ᑑᔑ↸ᔑꖌ", "Глаголы"],["жарить", "⫛ᔑꖌ", "Глаголы"],["мыть", "⫛ᔑ〒￤∷", "Глаголы"],
+  ["чистить", "ꖎ⟠∷", "Глаголы"],["шить", "↸⟁ᒲ", "Глаголы"],["рубить", "冫ᒷリᔑ∷", "Глаголы"],
+  ["копать", "ʖフꖎ", "Глаголы"],["сажать", "ꖎᔑꖌ", "Глаголы"],["расти", "↸￤ꖌ", "Глаголы"],
+  ["ломать", "⍊￤∷", "Глаголы"],["чинить", "∴⟠ᒲ", "Глаголы"],["красть", "ᑑᒷꖌ", "Глаголы"],
+  ["прятать", "┫⟠ꖌ", "Глаголы"],["дарить", "∧フᒲ⚍ᒲ", "Глаголы"],["принимать", "ꖎ∋⍊フ∷", "Глаголы"],
+  ["отправлять", "↸‖リ", "Глаголы"],["получать", "冫フリ", "Глаголы"],["приносить", "⨿ʖᔑʖᒷ", "Глаголы"],
+  ["уносить", "ꖌフꖌ", "Глаголы"],["вести", "冫フꖎᔑ勹", "Глаголы"],["следовать", "⫛⚍∴ᒷᓭ", "Глаголы"],
+  ["догонять", "ᒲ⟠∷", "Глаголы"],["убегать", "勹∋冫‖リ", "Глаголы"],["сражаться", "リ⟁ᓭ", "Глаголы"],
+  ["побеждать", "┫ᒷꖌ‖リ", "Глаголы"],["проигрывать", "ʖ￤ᓭ", "Глаголы"],["охранять", "ʖ∋ᒲ", "Глаголы"],
+  ["наказывать", "┫ᔑ⍊⚍ꖎ", "Глаголы"],["судить", "∧∋ᓭ", "Глаголы"],["учить", "冫フ┫フ勹", "Глаголы"],
+  ["рисовать", "冫⚍ꖎ", "Глаголы"],["танцевать", "⫛∋リ", "Глаголы"],["целовать", "⎓⚍ᒲ", "Глаголы"],
+  ["обнимать", "∏∋∴⟠ᓭ", "Глаголы"],["кричать", "ᒲ￤ꖎ", "Глаголы"],["шептать", "┫ᒷᓭ", "Глаголы"],
+  ["молчать", "⍊⟠勹", "Глаголы"],["звать", "勹⟁ᒲ", "Глаголы"],["просить", "∏ᔑᒲ⚍リ", "Глаголы"],
+  ["требовать", "⎓⚍勹￤ᓭ", "Глаголы"],["обещать", "⎓￤ꖎ", "Глаголы"],["лгать", "↸⟠↸∋ᒲ", "Глаголы"],
+  ["кормить", "ꖌ￤リ", "Глаголы"],["поить", "ꖎ⟠リ", "Глаголы"],["одевать", "冫ᒷᒲ", "Глаголы"],
+  ["будить", "∴⟠勹", "Глаголы"],["мечтать", "┫フ┫⚍∷", "Глаголы"],["расслабляться", "ꖎ￤⫛‖∷", "Глаголы"],
+  ["отдыхать", "ᒲ⟁勹", "Глаголы"],["гулять", "勹⟁∷", "Глаголы"],["ехать", "∧∋ʖ⟁ᓭ", "Глаголы"],
+  ["лететь", "⫛⟁∷", "Глаголы"],["нырять", "〒∋ꖌ", "Глаголы"],["карабкаться", "〒⟁ꖌ", "Глаголы"],
+  ["вращаться", "ᑑᔑᓭ⟠ᓭ", "Глаголы"],["кружиться", "∷フᒲ", "Глаголы"],["светить", "リ⟠↸‖ᓭ", "Глаголы"],
+  ["гореть", "┫￤ꖎ⚍∷", "Глаголы"],["тонуть", "⍊ᔑʖᔑᒲ", "Глаголы"],["таять", "⎓∋リ", "Глаголы"],
+  ["замерзать", "ʖ⚍ꖌ", "Глаголы"],["кипеть", "ꖌ⟁勹", "Глаголы"],["дуть", "⍊ᒷᓭ", "Глаголы"],
+  ["течь", "ꖎᒷᓭ", "Глаголы"],["капать", "冫￤ᒲ", "Глаголы"],["звенеть", "⎓⚍ʖᔑリ", "Глаголы"],
+  ["стучать", "ᓭ⟁┫￤ᒲ", "Глаголы"],["тихий", "⫛‖⎓‖↸ᒷ", "Прилагательные"],["громкий", "⍊⚍ꖌ∋ᓭ↸‖", "Прилагательные"],
+  ["мягкий", "∷⟁勹リᒷꖎʖフ", "Прилагательные"],["твёрдый", "ᒲ⚍ᓭ∴￤ᓭ‖", "Прилагательные"],["острый", "⍊ᒷ⍊ᒷ", "Прилагательные"],
+  ["тупой", "┫ᒷ冫￤⎓￤", "Прилагательные"],["тяжёлый", "ʖ⟠ᓭ↸ᒷ", "Прилагательные"],["лёгкий", "↸‖冫∋", "Прилагательные"],
+  ["мокрый", "ᒲᒷꖎ⟠", "Прилагательные"],["сухой", "ᑑ￤∏‖∷ᔑ", "Прилагательные"],["чистый", "ꖎ⟁⍊ᔑ⎓⟁", "Прилагательные"],
+  ["грязный", "ᑑ⟁ᓭᒷ", "Прилагательные"],["полный", "勹ᔑ∷‖", "Прилагательные"],["пустой", "↸ᒷ∷↸ᔑ", "Прилагательные"],
+  ["широкий", "ᓭᒷ⍊⟠", "Прилагательные"],["узкий", "ꖌ∋〒￤", "Прилагательные"],["высокий", "ᓭ⟁ᓭᒲ⚍", "Прилагательные"],
+  ["низкий", "⫛ᒷリ┫ᒷꖎᒷ", "Прилагательные"],["длинный", "↸ᒷꖎ⎓ᔑ", "Прилагательные"],["короткий", "〒ᒷ⫛￤ᓭꖌフ", "Прилагательные"],
+  ["толстый", "∴⟁⎓‖", "Прилагательные"],["тонкий", "┫⟁∷↸￤", "Прилагательные"],["дорогой", "∧ᔑᒲ￤", "Прилагательные"],
+  ["дешёвый", "ʖ⟁ᓭリ￤", "Прилагательные"],["близкий", "リフᓭᑑ￤", "Прилагательные"],["далёкий", "┫‖ꖎᔑ", "Прилагательные"],
+  ["ранний", "∴フ┫∋", "Прилагательные"],["поздний", "ᓭ￤冫‖", "Прилагательные"],["молодой", "⎓ᔑᒲ‖ᑑ￤", "Прилагательные"],
+  ["пожилой", "∧ᒷᓭ∴フ", "Прилагательные"],["здоровый", "↸⟁↸フ", "Прилагательные"],["больной", "∧フᓭ⎓ᔑ", "Прилагательные"],
+  ["голодный", "↸‖ᓭ∏⟁", "Прилагательные"],["сытый", "⫛⟠", "Прилагательные"],["тёплый", "ʖ‖⎓⟁", "Прилагательные"],
+  ["прохладный", "ᓭ∋リ勹⟠", "Прилагательные"],["сладкий", "〒ᒷꖎ⟠", "Прилагательные"],["горький", "┫⟠ᒲᒲᔑ", "Прилагательные"],
+  ["кислый", "ꖎᒷᒲ⟁", "Прилагательные"],["солёный", "勹￤∷ᔑ", "Прилагательные"],["вкусный", "∏フリ⟁", "Прилагательные"],
+  ["гладкий", "〒ᒷ∴∋", "Прилагательные"],["шершавый", "┫‖ꖌᒷ", "Прилагательные"],["круглый", "ʖ⚍ᓭ￤∴ᔑ", "Прилагательные"],
+  ["прямой", "∏⚍ꖎ∷⟠ꖌ⫛ᔑ", "Прилагательные"],["кривой", "ꖌ⚍リ∷￤", "Прилагательные"],["тайный", "∴⟁ꖌリᒷ", "Прилагательные"],
+  ["открытый", "∴⚍⫛∋", "Прилагательные"],["редкий", "ꖎ‖冫∋", "Прилагательные"],["частый", "冫⟠リ∋", "Прилагательные"],
+  ["ленивый", "ᒲ‖ꖌ￤", "Прилагательные"],["усердный", "⍊⚍⎓⟠", "Прилагательные"],["щедрый", "∧￤∷↸フᒲリ‖", "Прилагательные"],
+  ["жадный", "ʖ⟠ꖎ⟠", "Прилагательные"],["вежливый", "∴￤ꖌ⟁", "Прилагательные"],["грубый", "ʖ‖勹フ", "Прилагательные"],
+  ["всегда", "ᓭ⟁リᒷ", "Наречия"],["никогда", "ᓭᒷꖌʖ￤", "Наречия"],["иногда", "⍊ᒷ┫⟠", "Наречия"],
+  ["часто", "ᓭフᒲリ‖", "Наречия"],["редко", "∴ᔑ∴フ⍊⚍", "Наречия"],["уже", "ᒲ￤冫ᒷ", "Наречия"],
+  ["ещё", "⍊⟁ᓭ‖", "Наречия"],["сейчас", "⍊ᒷ〒⟠", "Наречия"],["потом", "┫ᔑᓭᓭ⟁", "Наречия"],
+  ["сначала", "∴ᔑᓭ‖", "Наречия"],["снова", "↸‖ꖎᒲ⚍ꖎ〒∋", "Наречия"],["вместе", "∏∋∷∷⚍", "Наречия"],
+  ["отдельно", "ᑑ⟠⍊⚍∷ꖎᒷ", "Наречия"],["далеко", "ꖎ￤ᒲꖎᒷ", "Наречия"],["близко", "〒⚍ꖎ∴ᒷ", "Наречия"],
+  ["вверху", "∷￤ꖌ￤", "Наречия"],["внизу", "ꖎᒷリフ冫∋", "Наречия"],["слева", "⫛⚍ꖌ⟁", "Наречия"],
+  ["справа", "勹‖⎓フ", "Наречия"],["впереди", "∧ᔑ冫ᔑ", "Наречия"],["сзади", "冫￤勹∏ᔑ", "Наречия"],
+  ["внутри", "┫‖⫛‖", "Наречия"],["снаружи", "∷∋∷┫⟠⍊ᒷ", "Наречия"],["везде", "ᓭ∋ꖌᓭ⟠", "Наречия"],
+  ["нигде", "⍊⚍ꖎᒷ", "Наречия"],["почти", "∷⟁勹￤", "Наречия"],["совсем", "⎓⚍ᒲ冫‖ᑑ￤", "Наречия"],
+  ["только", "ꖌ∋ᒲ⍊ᒷ∧⟠", "Наречия"],["даже", "冫‖⫛⟁", "Наречия"],["ровно", "〒∋↸ᔑ", "Наречия"],
+  ["вдруг", "⎓∋ᓭᓭ⟁", "Наречия"],["медленно", "∧⚍ᒲ∏⟁〒￤", "Наречия"],["тихо", "┫‖ᒲ⚍∴⚍", "Наречия"],
+  ["громко", "ᓭᒷ勹∧⟠〒フ", "Наречия"],["вот", "⍊￤∷ʖᔑᓭ⍊∋", "Наречия"],["пусть", "∧￤∏ᒷリ冫⟠", "Наречия"],
+  ["может", "┫ᔑᓭ∏∋", "Наречия"],["конечно", "ᓭフ⍊∋", "Наречия"],["возможно", "〒ᒷᒲ⎓ᔑ", "Наречия"],
+  ["вопрос", "∧ᔑ┫フ", "Абстрактные"],["ответ", "∴フ勹⚍ᓭꖎ∋", "Абстрактные"],["причина", "↸フꖎ￤", "Абстрактные"],
+  ["следствие", "ꖌ⟠∴ᒷ", "Абстрактные"],["пример", "∴フꖌ⍊フ", "Абстрактные"],["правило", "勹ᒷ┫ᔑ", "Абстрактные"],
+  ["ошибка", "ꖌ⟁ᒲᔑᒲ￤", "Абстрактные"],["успех", "冫∋リᓭ⟁∷↸￤", "Абстрактные"],["победа", "リ‖∷∋", "Абстрактные"],
+  ["поражение", "ʖ⚍ꖎᒲᒷ", "Абстрактные"],["выбор", "∧‖リꖎ⟁", "Абстрактные"],["путь", "∷⟠┫⟁〒⚍", "Абстрактные"],
+  ["шаг", "↸⚍∷⟠ᓭᑑ∋", "Абстрактные"],["начало", "ᑑᔑꖌ⟁⫛⟁", "Абстрактные"],["конец", "∷∋勹⟁", "Абстрактные"],
+  ["середина", "ʖᒷ┫‖", "Абстрактные"],["часть", "∧￤⫛⚍", "Абстрактные"],["целое", "冫⚍∷‖", "Абстрактные"],
+  ["группа", "ᑑ⟁∷〒ᒷ", "Абстрактные"],["пара", "ʖ∋⫛∋", "Абстрактные"],["ряд", "∷ᔑᒲ⚍", "Абстрактные"],
+  ["порядок", "ᑑフᑑ∋", "Абстрактные"],["хаос", "ʖ∋冫‖∴￤", "Абстрактные"],["форма", "〒フᓭ∴‖", "Абстрактные"],
+  ["размер", "勹フ冫∋⫛‖", "Абстрактные"],["вес", "⍊ᒷ∴⚍ꖌ⎓⟠", "Абстрактные"],["цвет", "⫛∋∏⟁ᓭꖎ⚍", "Абстрактные"],
+  ["запах", "ʖ⟠ꖌᔑ", "Абстрактные"],["вкус", "ᓭ⟁⎓∋", "Абстрактные"],["тень", "∏∋⍊∋", "Абстрактные"],
+  ["отражение", "勹ᒷ勹フ", "Абстрактные"],["след", "∴ᒷ冫∋", "Абстрактные"],["знак", "⫛‖∧ᒷ", "Абстрактные"],
+  ["символ", "冫フʖフᓭ⚍", "Абстрактные"],["слово", "ᓭ⟁ꖎᒷ", "Абстрактные"],["предложение", "ꖌᔑ〒⚍", "Абстрактные"],
+  ["сон", "〒∋", "Абстрактные"],["тайна", "↸∋ᓭ⚍ʖ‖", "Абстрактные"],["загадка", "⫛￤⎓⚍⎓ᒷ", "Абстрактные"],
+  ["подарок", "ʖᔑꖌ勹∋", "Абстрактные"],["обещание", "∧￤ꖎ⫛⟁", "Абстрактные"],["клятва", "リ⟠ᓭ⚍", "Абстрактные"],
+  ["дружба", "ꖎᒷꖎꖌ‖", "Абстрактные"],["вражда", "⎓⟠↸ᒷ", "Абстрактные"],["союз", "勹∋┫ᔑ", "Абстрактные"],
+  ["враждебность", "⎓‖勹┫∋", "Абстрактные"],["школьник", "⎓‖勹∋勹ꖎ⟁", "Общество"],["студент", "⍊⟁∷ᑑ‖", "Общество"],
+  ["директор", "ᓭ￤〒ᒷ", "Общество"],["хозяин", "ᒲ∋冫∋", "Общество"],["рабочий", "∏￤ᒲᒲᒷ∷↸フ", "Общество"],
+  ["клиент", "ꖌ⟁勹ᔑꖎ〒⟠", "Общество"],["покупатель", "∏∋リ⟠", "Общество"],["продавец", "ꖌ⟁∴⟁∷‖", "Общество"],
+  ["сторож", "冫ᒷリᔑ∷ᔑ", "Общество"],["охрана", "⍊∋⍊⟁∏⚍", "Общество"],["пожар", "ᑑᔑ冫ᒷ∧フ", "Общество"],
+  ["наводнение", "∧￤冫∋", "Общество"],["землетрясение", "〒⟁ᓭꖌ⟠", "Общество"],["авария", "勹⟁⫛ᔑꖌ∧⟠", "Общество"],
+  ["болезнь", "ᑑ‖⍊⟠↸⟁", "Общество"],["лекарство", "∏￤ʖ⟠", "Общество"],["лечение", "ꖎ⟁┫ᒷ", "Общество"],
+  ["операция", "∧⟠ᓭリ∋", "Общество"]
+];
+
+
+/* Дополнение словаря: 500 новых лексических единиц с самостоятельными корнями.
+   Формы созданы из фонетических слогов альбатроссианского языка,
+   а не транслитерацией русских букв. */
+const EXTRA_WORDS = [
+  ["кого", "ᒲᔑフ∷ᒲᔑ", "Местоимения"],
+  ["кому", "∷⚍ʖ∋∷⚍", "Местоимения"],
+  ["кем", "ꖎᔑᔑ∷ꖎᔑ", "Местоимения"],
+  ["ком", "〒∋ᓭ⚍〒∋", "Местоимения"],
+  ["чего", "ᓭ⟁ꖎ∋ᓭ⟁", "Местоимения"],
+  ["чему", "勹ᔑ⍊ᔑ勹ᔑ", "Местоимения"],
+  ["чем", "⍊フリ∋⍊フ", "Местоимения"],
+  ["чей", "↸ᒷᑑ∋↸ᒷ", "Местоимения"],
+  ["чья", "∧￤ᒷ∷∧￤", "Местоимения"],
+  ["чьё", "リᔑ⚍∷リᔑ", "Местоимения"],
+  ["чьи", "⫛⚍∷⚍⫛⚍", "Местоимения"],
+  ["которого", "フ∷ᓭ⟁フ∷", "Местоимения"],
+  ["которой", "ᑑᒷ↸ᒷᑑᒷ", "Местоимения"],
+  ["которому", "ꖌ⟁⫛⚍ꖌ⟁", "Местоимения"],
+  ["которым", "ʖ∋ꖌ⟁ʖ∋", "Местоимения"],
+  ["сама", "ᒷᓭ⎓ᔑᒷᓭ", "Местоимения"],
+  ["сам", "⎓ᔑ∋ꖎ⎓ᔑ", "Местоимения"],
+  ["само", "ᔑ∷∷ᔑᔑ∷", "Местоимения"],
+  ["сами", "⚍ᓭ勹∋⚍ᓭ", "Местоимения"],
+  ["себе", "∋ꖎ∧ᒷ∋ꖎ", "Местоимения"],
+  ["собой", "ᓭ⚍フ⚍ᓭ⚍", "Местоимения"],
+  ["мой", "ᒲ∋ʖ⚍ᒲ∋", "Местоимения"],
+  ["моя", "∷ᔑᔑꖎ∷ᔑ", "Местоимения"],
+  ["моё", "ꖎ∋ᒲᔑꖎ∋", "Местоимения"],
+  ["мои", "〒ᔑ〒∋〒ᔑ", "Местоимения"],
+  ["твой", "勹∋⍊フ勹∋", "Местоимения"],
+  ["твоя", "⍊ᔑリᔑ⍊ᔑ", "Местоимения"],
+  ["твоё", "↸⚍ᑑᒷ↸⚍", "Местоимения"],
+  ["твои", "∧ᒷᒷᓭ∧ᒷ", "Местоимения"],
+  ["наш", "リ∋⚍ᓭリ∋", "Местоимения"],
+  ["наша", "⫛ᔑᒲ∋⫛ᔑ", "Местоимения"],
+  ["наше", "フ⚍〒ᔑフ⚍", "Местоимения"],
+  ["наши", "ᑑ∋↸⚍ᑑ∋", "Местоимения"],
+  ["ваш", "ꖌᔑ⫛ᔑꖌᔑ", "Местоимения"],
+  ["ваша", "ʖ⚍ꖌᔑʖ⚍", "Местоимения"],
+  ["ваше", "ᒷ∷⎓⚍ᒷ∷", "Местоимения"],
+  ["ваши", "⎓⚍∋ᓭ⎓⚍", "Местоимения"],
+  ["его", "ᔑꖎꖎᔑᔑꖎ", "Местоимения"],
+  ["её", "⚍∷勹ᔑ⚍∷", "Местоимения"],
+  ["их", "∋ᓭ∧￤∋ᓭ", "Местоимения"],
+  ["эта", "ᒲᔑ⚍ᓭ勹ᔑ", "Местоимения"],
+  ["это", "∷⚍ᒲ∋⍊フ", "Местоимения"],
+  ["эти", "ꖎᔑ〒ᔑ↸ᒷ", "Местоимения"],
+  ["та", "〒∋↸⚍∧￤", "Местоимения"],
+  ["то", "ᓭ⟁⫛ᔑリᔑ", "Местоимения"],
+  ["те", "勹ᔑꖌᔑ⫛⚍", "Местоимения"],
+  ["такой", "⍊フ⎓⚍フ∷", "Местоимения"],
+  ["такая", "↸ᒷ∋ᓭᑑᒷ", "Местоимения"],
+  ["такое", "∧￤ꖎᔑꖌ⟁", "Местоимения"],
+  ["такие", "リᔑ勹ᔑʖ∋", "Местоимения"],
+  ["столько", "⫛⚍∧￤ᒷᓭ", "Местоимения"],
+  ["каждый", "フ∷フ∷⎓ᔑ", "Местоимения"],
+  ["каждая", "ᑑᒷʖ∋ᔑ∷", "Местоимения"],
+  ["каждое", "ꖌ⟁ᔑ∷⚍ᓭ", "Местоимения"],
+  ["каждый-нибудь", "ʖ∋ᓭ⚍∋ꖎ", "Местоимения"],
+  ["кто-нибудь", "ᒷᓭꖎ∋ᓭ⚍", "Местоимения"],
+  ["что-нибудь", "⎓ᔑ⍊ᔑᒲ∋", "Местоимения"],
+  ["кто-либо", "ᔑ∷リ∋∷ᔑ", "Местоимения"],
+  ["что-либо", "⚍ᓭᑑ∋ꖎ∋", "Местоимения"],
+  ["никто", "∋ꖎᒷ∷〒ᔑ", "Местоимения"],
+  ["ничто", "ᓭ⚍⚍∷勹∋", "Местоимения"],
+  ["некого", "ᒲ∋∷⚍⍊ᔑ", "Местоимения"],
+  ["нечего", "∷ᔑᓭ⟁↸⚍", "Местоимения"],
+  ["некто", "ꖎ∋↸ᒷ∧ᒷ", "Местоимения"],
+  ["нечто", "〒ᔑ⫛⚍リ∋", "Местоимения"],
+  ["любой", "勹∋ꖌ⟁⫛ᔑ", "Местоимения"],
+  ["любая", "⍊ᔑ⎓ᔑフ⚍", "Местоимения"],
+  ["любое", "↸⚍∋ꖎᑑ∋", "Местоимения"],
+  ["любые", "∧ᒷ∷ᔑꖌᔑ", "Местоимения"],
+  ["весь", "リ∋勹∋ʖ⚍", "Местоимения"],
+  ["вся", "⫛ᔑ∧ᒷᒷ∷", "Местоимения"],
+  ["всё", "フ⚍フ⚍⎓⚍", "Местоимения"],
+  ["все", "ᑑ∋ʖ⚍ᔑꖎ", "Местоимения"],
+  ["всякий", "ꖌᔑᔑꖎ⚍∷", "Местоимения"],
+  ["всякая", "ʖ⚍ᒲᔑ∋ᓭ", "Местоимения"],
+  ["всякое", "ᒷ∷〒∋ᒲᔑ", "Местоимения"],
+  ["оба", "⎓⚍⍊フ∷⚍", "Местоимения"],
+  ["обе", "ᔑꖎリᔑꖎᔑ", "Местоимения"],
+  ["другой", "⚍∷ᑑᒷ〒∋", "Местоимения"],
+  ["другая", "∋ᓭᒷᓭᓭ⟁", "Местоимения"],
+  ["другое", "ᒲᔑ勹∋⫛⚍", "Местоимения"],
+  ["другие", "∷⚍∧ᒷフ∷", "Местоимения"],
+  ["иной", "ꖎᔑフ⚍ᑑᒷ", "Местоимения"],
+  ["иная", "〒∋ʖ⚍ꖌ⟁", "Местоимения"],
+  ["иное", "ᓭ⟁ᔑ∷∋", "Местоимения"],
+  ["иные", "勹ᔑᒲᔑᒷᓭ", "Местоимения"],
+  ["столько-нибудь", "⍊フ〒∋⎓ᔑ", "Местоимения"],
+  ["во", "↸ᒷ⍊フᔑ∷", "Служебные"],
+  ["из-за", "∧￤リᔑ⚍ᓭ", "Служебные"],
+  ["из-под", "リᔑᑑᒷ∋ꖎ", "Служебные"],
+  ["от", "⫛⚍ᒷᓭᓭ⚍", "Служебные"],
+  ["у", "フ∷⚍ᓭᒲ∋", "Служебные"],
+  ["возле", "ᑑᒷᒲ∋∷ᔑ", "Служебные"],
+  ["рядом", "ꖌ⟁〒ᔑꖎ∋", "Служебные"],
+  ["среди", "ʖ∋↸⚍〒ᔑ", "Служебные"],
+  ["сквозь", "ᒷᓭ⫛ᔑ勹∋", "Служебные"],
+  ["ради", "⎓ᔑꖌᔑ⍊ᔑ", "Служебные"],
+  ["кроме", "ᔑ∷⎓⚍↸⚍", "Служебные"],
+  ["вместо", "⚍ᓭ∋ᓭ∧ᒷ", "Служебные"],
+  ["при", "∋ꖎꖎᔑリ∋", "Служебные"],
+  ["о", "ᓭ⚍勹ᔑ⫛ᔑ", "Служебные"],
+  ["об", "ᒲ∋∧￤フ⚍", "Служебные"],
+  ["обо", "∷ᔑフ∷ᑑ∋", "Служебные"],
+  ["по", "ꖎ∋ʖ∋ꖌᔑ", "Служебные"],
+  ["со", "〒ᔑᔑ∷ʖ⚍", "Служебные"],
+  ["ко", "勹∋ᓭ⚍ᒷ∷", "Служебные"],
+  ["будто", "⍊ᔑꖎ∋⎓⚍", "Служебные"],
+  ["словно", "↸⚍⍊ᔑᔑꖎ", "Служебные"],
+  ["хотя", "∧ᒷリ∋⚍∷", "Служебные"],
+  ["чтобы", "リ∋ᑑ∋∋ᓭ", "Служебные"],
+  ["поэтому", "⫛ᔑᒷ∷ᒲᔑ", "Служебные"],
+  ["затем", "フ⚍⚍∷∷⚍", "Служебные"],
+  ["однако", "ᑑ∋∷⚍ꖎᔑ", "Служебные"],
+  ["а", "ꖌᔑᓭ⟁〒∋", "Служебные"],
+  ["либо", "ʖ⚍↸ᒷᓭ⟁", "Служебные"],
+  ["ни", "ᒷ∷⫛⚍勹ᔑ", "Служебные"],
+  ["также", "⎓⚍ꖌ⟁⍊フ", "Служебные"],
+  ["лишь", "ᔑꖎ⎓ᔑ↸ᒷ", "Служебные"],
+  ["именно", "⚍∷∋ꖎ∧￤", "Служебные"],
+  ["опять", "∋ᓭ∷ᔑリᔑ", "Служебные"],
+  ["весьма", "ᒲᔑᑑ∋ᒷᓭ", "Служебные"],
+  ["слишком", "∷⚍ᒷ∷⎓ᔑ", "Служебные"],
+  ["более", "ꖎᔑ⚍∷ᔑ∷", "Служебные"],
+  ["менее", "〒∋∷⚍⚍ᓭ", "Служебные"],
+  ["самый", "ᓭ⟁ᓭ⟁∋ꖎ", "Служебные"],
+  ["самый-то", "勹ᔑ↸ᒷᓭ⚍", "Служебные"],
+  ["тут", "⍊フ⫛⚍ᒲ∋", "Служебные"],
+  ["туда", "↸ᒷꖌ⟁∷ᔑ", "Служебные"],
+  ["сюда", "∧￤⎓ᔑꖎ∋", "Служебные"],
+  ["оттуда", "リᔑ∋ꖎ〒ᔑ", "Служебные"],
+  ["отсюда", "⫛⚍∷ᔑ勹∋", "Служебные"],
+  ["куда", "フ∷勹∋⍊ᔑ", "Служебные"],
+  ["откуда", "ᑑᒷ∧ᒷ↸⚍", "Служебные"],
+  ["зачем", "ꖌ⟁フ⚍∧ᒷ", "Служебные"],
+  ["отчего", "ʖ∋ʖ⚍リ∋", "Служебные"],
+  ["поскольку", "ᒷᓭᔑꖎ⫛ᔑ", "Служебные"],
+  ["несмотря", "⎓ᔑᒲᔑフ⚍", "Служебные"],
+  ["вопреки", "ᔑ∷〒∋ᑑ∋", "Служебные"],
+  ["согласно", "⚍ᓭ⍊フꖌᔑ", "Служебные"],
+  ["благодаря", "∋ꖎリᔑʖ⚍", "Служебные"],
+  ["вследствие", "ᓭ⚍ᑑᒷᒷ∷", "Служебные"],
+  ["вне", "ᒲ∋ᒷᓭ⎓⚍", "Служебные"],
+  ["сверху", "∷ᔑ⚍ᓭᔑꖎ", "Служебные"],
+  ["снизу", "ꖎ∋ᒲ∋⚍∷", "Служебные"],
+  ["позади", "〒ᔑ〒ᔑ∋ᓭ", "Служебные"],
+  ["наконец", "勹∋↸⚍ᒲᔑ", "Служебные"],
+  ["сразу", "⍊ᔑ⫛ᔑ∷⚍", "Служебные"],
+  ["быстро", "↸⚍ꖌᔑꖎᔑ", "Служебные"],
+  ["обычно", "∧ᒷ⎓⚍〒∋", "Служебные"],
+  ["наверное", "リ∋∋ᓭᓭ⟁", "Служебные"],
+  ["точно", "⫛ᔑꖎᔑ勹ᔑ", "Служебные"],
+  ["действительно", "フ⚍勹ᔑ⍊フ", "Служебные"],
+  ["просто", "ᑑ∋∧￤↸ᒷ", "Служебные"],
+  ["прямо", "ꖌᔑフ∷∧￤", "Служебные"],
+  ["обратно", "ʖ⚍ʖ∋リᔑ", "Служебные"],
+  ["выше", "ᒷ∷ᔑ∷⫛⚍", "Служебные"],
+  ["ниже", "⎓⚍ᓭ⚍フ∷", "Служебные"],
+  ["раньше", "ᔑꖎꖎ∋ᑑᒷ", "Служебные"],
+  ["позже", "⚍∷⍊ᔑꖌ⟁", "Служебные"],
+  ["теперь", "∋ᓭリ∋ʖ∋", "Служебные"],
+  ["послезавтра", "ᒲᔑ∋ᓭᓭ⚍", "Служебные"],
+  ["позавчера", "∷⚍ꖎᔑᒲ∋", "Служебные"],
+  ["утром", "ꖎᔑ勹ᔑ∷ᔑ", "Служебные"],
+  ["вечером", "〒∋∧￤ꖎ∋", "Служебные"],
+  ["ночью", "ᓭ⟁フ∷〒ᔑ", "Служебные"],
+  ["днём", "勹ᔑʖ∋勹∋", "Служебные"],
+  ["весной", "⍊フᔑ∷⍊ᔑ", "Служебные"],
+  ["летом", "↸ᒷᓭ⚍↸⚍", "Служебные"],
+  ["осенью", "∧￤ꖎ∋∧ᒷ", "Служебные"],
+  ["зимой", "リᔑ⍊ᔑリ∋", "Служебные"],
+  ["крутой", "⫛⚍リ∋⫛ᔑ", "Прилагательные"],
+  ["классный", "フ∷ᑑ∋フ⚍", "Прилагательные"],
+  ["отличный", "ᑑᒷᒷ∷ᑑ∋", "Прилагательные"],
+  ["прекрасный", "ꖌ⟁⚍∷ꖌᔑ", "Прилагательные"],
+  ["взрослый", "ʖ∋∷⚍ʖ⚍", "Прилагательные"],
+  ["древний", "ᒷᓭᓭ⟁ᒷ∷", "Прилагательные"],
+  ["современный", "⎓ᔑ↸ᒷ⎓⚍", "Прилагательные"],
+  ["нужный", "ᔑ∷⫛⚍ᔑꖎ", "Прилагательные"],
+  ["полезный", "⚍ᓭꖌ⟁⚍∷", "Прилагательные"],
+  ["вредный", "∋ꖎ⎓ᔑ∋ᓭ", "Прилагательные"],
+  ["опасный", "ᓭ⚍∋ꖎᒲᔑ", "Прилагательные"],
+  ["безопасный", "ᒲ∋∷ᔑ∷⚍", "Прилагательные"],
+  ["трудный", "∷ᔑ勹∋ꖎᔑ", "Прилагательные"],
+  ["злой", "ꖎ∋∧ᒷ〒∋", "Прилагательные"],
+  ["скучный", "〒ᔑフ⚍ᓭ⟁", "Прилагательные"],
+  ["интересный", "勹∋ʖ⚍勹ᔑ", "Прилагательные"],
+  ["странный", "⍊ᔑᔑꖎ⍊フ", "Прилагательные"],
+  ["обычный", "↸⚍ᒲᔑ↸ᒷ", "Прилагательные"],
+  ["яркий", "∧ᒷ〒∋∧￤", "Прилагательные"],
+  ["свежий", "リ∋⍊フリᔑ", "Прилагательные"],
+  ["невкусный", "⫛ᔑリᔑ⫛⚍", "Прилагательные"],
+  ["сонный", "フ⚍ᑑᒷフ∷", "Прилагательные"],
+  ["бодрый", "ᑑ∋ᒷᓭᑑᒷ", "Прилагательные"],
+  ["занятый", "ꖌᔑ⚍ᓭꖌ⟁", "Прилагательные"],
+  ["закрытый", "ʖ⚍ᒲ∋ʖ∋", "Прилагательные"],
+  ["правильный", "ᒷ∷〒ᔑᒷᓭ", "Прилагательные"],
+  ["неправильный", "⎓⚍↸⚍⎓ᔑ", "Прилагательные"],
+  ["верный", "ᔑꖎ⫛ᔑᔑ∷", "Прилагательные"],
+  ["ложный", "⚍∷ꖌᔑ⚍ᓭ", "Прилагательные"],
+  ["хитрый", "∋ᓭ⎓⚍∋ꖎ", "Прилагательные"],
+  ["нервный", "ᒲᔑ⍊フ勹∋", "Прилагательные"],
+  ["уверенный", "∷⚍リᔑ⍊ᔑ", "Прилагательные"],
+  ["неуверенный", "ꖎᔑᑑᒷ↸⚍", "Прилагательные"],
+  ["готовый", "〒∋ᒷᓭ∧ᒷ", "Прилагательные"],
+  ["дальний", "ᓭ⟁⚍ᓭリ∋", "Прилагательные"],
+  ["общий", "勹ᔑᒲ∋⫛ᔑ", "Прилагательные"],
+  ["личный", "⍊フ〒ᔑフ⚍", "Прилагательные"],
+  ["местный", "↸ᒷ↸⚍ᑑ∋", "Прилагательные"],
+  ["чужой", "∧￤⫛ᔑꖌᔑ", "Прилагательные"],
+  ["родной", "リᔑꖌᔑʖ⚍", "Прилагательные"],
+  ["знакомый", "⫛⚍⎓⚍ᒷ∷", "Прилагательные"],
+  ["незнакомый", "フ∷∋ᓭ⎓⚍", "Прилагательные"],
+  ["любимый", "ᑑᒷꖎᔑᔑꖎ", "Прилагательные"],
+  ["нелюбимый", "ꖌ⟁勹ᔑ⚍∷", "Прилагательные"],
+  ["последний", "ʖ∋∧￤∋ᓭ", "Прилагательные"],
+  ["третий", "ᒷᓭフ∷ᒲᔑ", "Прилагательные"],
+  ["следующий", "⎓ᔑʖ∋∷⚍", "Прилагательные"],
+  ["предыдущий", "ᔑ∷ᔑ∷ꖎᔑ", "Прилагательные"],
+  ["целый", "⚍ᓭᓭ⚍〒∋", "Прилагательные"],
+  ["половинный", "∋ꖎꖎ∋ᓭ⟁", "Прилагательные"],
+  ["квадратный", "ᓭ⚍⍊ᔑ勹ᔑ", "Прилагательные"],
+  ["ровный", "ᒲ∋リ∋⍊フ", "Прилагательные"],
+  ["шероховатый", "∷ᔑᑑ∋↸ᒷ", "Прилагательные"],
+  ["пушистый", "ꖎ∋ᒷ∷∧￤", "Прилагательные"],
+  ["колючий", "〒ᔑ⚍∷リᔑ", "Прилагательные"],
+  ["шумный", "勹∋∷⚍⫛⚍", "Прилагательные"],
+  ["бесшумный", "⍊ᔑᓭ⟁フ∷", "Прилагательные"],
+  ["влажный", "↸⚍↸ᒷᑑᒷ", "Прилагательные"],
+  ["суховатый", "∧ᒷ⫛⚍ꖌ⟁", "Прилагательные"],
+  ["глубокий", "リ∋ꖌ⟁ʖ∋", "Прилагательные"],
+  ["мелкий", "⫛ᔑ⎓ᔑᒷᓭ", "Прилагательные"],
+  ["редкостный", "フ⚍∋ꖎ⎓ᔑ", "Прилагательные"],
+  ["невероятный", "ᑑ∋∷ᔑᔑ∷", "Прилагательные"],
+  ["возможный", "ꖌᔑ勹∋⚍ᓭ", "Прилагательные"],
+  ["невозможный", "ʖ⚍∧ᒷ∋ꖎ", "Прилагательные"],
+  ["реальный", "ᒷ∷フ⚍ᓭ⚍", "Прилагательные"],
+  ["настоящий", "⎓⚍ʖ⚍ᒲ∋", "Прилагательные"],
+  ["искусственный", "ᔑꖎᔑꖎ∷ᔑ", "Прилагательные"],
+  ["естественный", "⚍∷ᒲᔑꖎ∋", "Прилагательные"],
+  ["живой", "∋ᓭ〒∋〒ᔑ", "Прилагательные"],
+  ["мёртвый", "ᒲᔑꖌ⟁⫛ᔑ", "Прилагательные"],
+  ["активный", "∷⚍⎓ᔑフ⚍", "Прилагательные"],
+  ["пассивный", "ꖎᔑ∋ꖎᑑ∋", "Прилагательные"],
+  ["трудолюбивый", "〒∋∷ᔑꖌᔑ", "Прилагательные"],
+  ["внимательный", "ᓭ⟁勹∋ʖ⚍", "Прилагательные"],
+  ["рассеянный", "勹ᔑ∧ᒷᒷ∷", "Прилагательные"],
+  ["аккуратный", "⍊フフ⚍⎓⚍", "Прилагательные"],
+  ["небрежный", "↸ᒷʖ⚍ᔑꖎ", "Прилагательные"],
+  ["воспитанный", "∧￤ᔑꖎ⚍∷", "Прилагательные"],
+  ["невоспитанный", "リᔑᒲᔑ∋ᓭ", "Прилагательные"],
+  ["серьёзный", "⫛⚍〒∋ᒲᔑ", "Прилагательные"],
+  ["смешной", "フ∷⍊フ∷⚍", "Прилагательные"],
+  ["забавный", "ᑑᒷリᔑꖎᔑ", "Прилагательные"],
+  ["милый", "ꖌ⟁ᑑᒷ〒∋", "Прилагательные"],
+  ["приятный", "ʖ∋ᒷᓭᓭ⟁", "Прилагательные"],
+  ["неприятный", "ᒷᓭ⚍ᓭ勹ᔑ", "Прилагательные"],
+  ["удобный", "⎓ᔑᒲ∋⍊フ", "Прилагательные"],
+  ["неудобный", "ᔑ∷〒ᔑ↸ᒷ", "Прилагательные"],
+  ["красивейший", "⚍ᓭ↸⚍∧￤", "Прилагательные"],
+  ["аккуратно", "∋ꖎ⫛ᔑリᔑ", "Наречия"],
+  ["осторожно", "ᓭ⚍ꖌᔑ⫛⚍", "Наречия"],
+  ["смело", "ᒲ∋⎓⚍フ∷", "Наречия"],
+  ["уверенно", "∷ᔑ∋ᓭᑑᒷ", "Наречия"],
+  ["спокойно", "ꖎ∋ꖎᔑꖌ⟁", "Наречия"],
+  ["нервно", "〒ᔑ勹ᔑʖ∋", "Наречия"],
+  ["радостно", "勹∋∧￤ᒷᓭ", "Наречия"],
+  ["грустно", "⍊ᔑフ∷⎓ᔑ", "Наречия"],
+  ["весело", "↸⚍ʖ∋ᔑ∷", "Наречия"],
+  ["грубо", "∧ᒷᔑ∷⚍ᓭ", "Наречия"],
+  ["вежливо", "リ∋ᓭ⚍∋ꖎ", "Наречия"],
+  ["честно", "⫛ᔑꖎ∋ᓭ⚍", "Наречия"],
+  ["искренне", "フ⚍⍊ᔑᒲ∋", "Наречия"],
+  ["специально", "ᑑ∋リ∋∷ᔑ", "Наречия"],
+  ["случайно", "ꖌᔑᑑ∋ꖎ∋", "Наречия"],
+  ["нарочно", "ʖ⚍ᒷ∷〒ᔑ", "Наречия"],
+  ["тайно", "ᒷ∷⚍∷勹∋", "Наречия"],
+  ["открыто", "⎓⚍∷⚍⍊ᔑ", "Наречия"],
+  ["публично", "ᔑꖎᓭ⟁↸⚍", "Наречия"],
+  ["лично", "⚍∷↸ᒷ∧ᒷ", "Наречия"],
+  ["ежедневно", "∋ᓭ⫛⚍リ∋", "Наречия"],
+  ["еженедельно", "ᒲᔑᓭ⚍ᒷ∷", "Наречия"],
+  ["ежемесячно", "∷⚍ꖎ∋⎓⚍", "Наречия"],
+  ["ежегодно", "ꖎᔑ⍊ᔑᔑꖎ", "Наречия"],
+  ["постоянно", "〒∋リ∋⚍∷", "Наречия"],
+  ["временно", "ᓭ⟁ᑑ∋∋ᓭ", "Наречия"],
+  ["навсегда", "勹ᔑᒷ∷ᒲᔑ", "Наречия"],
+  ["внезапно", "⍊フ⚍∷∷⚍", "Наречия"],
+  ["неожиданно", "↸ᒷ∷⚍ꖎᔑ", "Наречия"],
+  ["постепенно", "∧￤ᓭ⟁〒∋", "Наречия"],
+  ["немедленно", "リᔑ↸ᒷᓭ⟁", "Наречия"],
+  ["срочно", "⫛⚍⫛⚍勹ᔑ", "Наречия"],
+  ["заранее", "フ∷ꖌ⟁⍊フ", "Наречия"],
+  ["поздно", "ᑑᒷ⎓ᔑ↸ᒷ", "Наречия"],
+  ["рано", "ꖌ⟁∋ꖎ∧￤", "Наречия"],
+  ["вовремя", "ʖ∋∷ᔑリᔑ", "Наречия"],
+  ["немедля", "ᒷᓭ勹∋⫛⚍", "Наречия"],
+  ["издалека", "⎓ᔑ∧ᒷフ∷", "Наречия"],
+  ["изнутри", "ᔑ∷フ⚍ᑑᒷ", "Наречия"],
+  ["наверху", "⚍ᓭʖ⚍ꖌ⟁", "Наречия"],
+  ["вперед", "∋ꖎᔑꖎ∷∋", "Наречия"],
+  ["назад", "ᓭ⚍ᒲᔑᒷᓭ", "Наречия"],
+  ["криво", "ᒲ∋〒∋⎓ᔑ", "Наречия"],
+  ["кругом", "∷ᔑ⍊フᔑ∷", "Наречия"],
+  ["вокруг", "ꖎ∋リᔑ⚍ᓭ", "Наречия"],
+  ["повсюду", "〒ᔑᑑᒷ∋ꖎ", "Наречия"],
+  ["где-то", "勹∋ᒷᓭᓭ⚍", "Наречия"],
+  ["куда-то", "⍊ᔑ⚍ᓭᒲ∋", "Наречия"],
+  ["откуда-то", "↸⚍ᒲ∋∷ᔑ", "Наречия"],
+  ["зачем-то", "∧ᒷ〒ᔑꖎ∋", "Наречия"],
+  ["почему-то", "リ∋↸⚍〒ᔑ", "Наречия"],
+  ["совершенно", "⫛ᔑ⫛ᔑ勹∋", "Наречия"],
+  ["абсолютно", "フ⚍ꖌᔑ⍊ᔑ", "Наречия"],
+  ["полностью", "ᑑ∋⎓⚍↸⚍", "Наречия"],
+  ["частично", "ꖌᔑ∋ᓭ∧ᒷ", "Наречия"],
+  ["достаточно", "ʖ⚍ꖎᔑリ∋", "Наречия"],
+  ["недостаточно", "ᒷ∷勹ᔑ⫛ᔑ", "Наречия"],
+  ["примерно", "⎓⚍∧￤フ⚍", "Наречия"],
+  ["приблизительно", "ᔑꖎフ∷ᑑ∋", "Наречия"],
+  ["едва", "⚍∷ʖ∋ꖌᔑ", "Наречия"],
+  ["barely", "∋ᓭᔑ∷ʖ⚍", "Наречия"],
+  ["особенно", "ᒲᔑ↸⚍ᒲᔑ", "Наречия"],
+  ["исключительно", "∷⚍⫛ᔑ∷⚍", "Наречия"],
+  ["главным", "ꖎᔑꖌᔑꖎᔑ", "Наречия"],
+  ["образом", "〒∋⎓⚍〒∋", "Наречия"],
+  ["сперва", "ᓭ⟁∋ᓭᓭ⟁", "Наречия"],
+  ["далее", "勹ᔑꖎᔑ勹ᔑ", "Наречия"],
+  ["одновременно", "⍊フ勹ᔑ⍊フ", "Наречия"],
+  ["порознь", "↸ᒷ∧￤↸ᒷ", "Наречия"],
+  ["сообща", "∧￤フ∷∧￤", "Наречия"],
+  ["взаимно", "リᔑʖ∋リᔑ", "Наречия"],
+  ["самостоятельно", "⫛⚍ᔑ∷⫛⚍", "Наречия"],
+  ["поодиночке", "フ∷ᓭ⚍フ∷", "Наречия"],
+  ["заново", "ᑑᒷꖎ∋ᑑᒷ", "Наречия"],
+  ["повторно", "ꖌ⟁⍊ᔑꖌ⟁", "Наречия"],
+  ["больше", "ʖ∋リ∋ʖ∋", "Наречия"],
+  ["меньше", "ᒷᓭᑑ∋ᒷᓭ", "Наречия"],
+  ["лучше", "⎓ᔑᒷ∷⎓ᔑ", "Наречия"],
+  ["хуже", "ᔑ∷⚍∷ᔑ∷", "Наречия"],
+  ["сильнее", "⚍ᓭ∷⚍⚍ᓭ", "Наречия"],
+  ["слабее", "∋ꖎᓭ⟁∋ꖎ", "Наречия"],
+  ["дальше", "ᓭ⚍↸ᒷᓭ⚍", "Наречия"],
+  ["ближе", "ᒲ∋⫛⚍ᒲ∋", "Наречия"],
+  ["глубже", "∷ᔑꖌ⟁∷ᔑ", "Наречия"],
+  ["мельче", "ꖎ∋⎓ᔑꖎ∋", "Наречия"],
+  ["громче", "〒ᔑ∋ꖎ〒ᔑ", "Наречия"],
+  ["тише", "勹∋∷ᔑ勹∋", "Наречия"],
+  ["ярче", "⍊ᔑ勹∋⍊ᔑ", "Наречия"],
+  ["темнее", "↸⚍∧ᒷ↸⚍", "Наречия"],
+  ["легче", "∧ᒷフ⚍∧ᒷ", "Наречия"],
+  ["тяжелее", "リ∋ʖ⚍リ∋", "Наречия"],
+  ["являться", "⫛ᔑᔑꖎ⫛ᔑ", "Глаголы"],
+  ["существовать", "フ⚍ᒲᔑフ⚍", "Глаголы"],
+  ["становиться", "ᑑ∋〒∋ᑑ∋", "Глаголы"],
+  ["оставаться", "ꖌᔑ⍊フꖌᔑ", "Глаголы"],
+  ["находиться", "ʖ⚍リᔑʖ⚍", "Глаголы"],
+  ["казаться", "ᒷ∷ᑑᒷᒷ∷", "Глаголы"],
+  ["означать", "⎓⚍ᒷᓭ⎓⚍", "Глаголы"],
+  ["иметь", "ᔑꖎ⚍ᓭᔑꖎ", "Глаголы"],
+  ["обладать", "⚍∷ᒲ∋⚍∷", "Глаголы"],
+  ["принадлежать", "∋ᓭ〒ᔑ∋ᓭ", "Глаголы"],
+  ["отдавать", "ᒲᔑʖ⚍勹ᔑ", "Глаголы"],
+  ["класть", "∷⚍ᔑꖎ⍊フ", "Глаголы"],
+  ["ставить", "ꖎᔑᒲᔑ↸ᒷ", "Глаголы"],
+  ["лежать", "〒∋〒∋∧￤", "Глаголы"],
+  ["висеть", "ᓭ⟁⍊フリᔑ", "Глаголы"],
+  ["ходить", "勹ᔑリᔑ⫛⚍", "Глаголы"],
+  ["ездить", "⍊フᑑᒷフ∷", "Глаголы"],
+  ["бегать", "↸ᒷᒷᓭᑑᒷ", "Глаголы"],
+  ["плыть", "∧￤⚍ᓭꖌ⟁", "Глаголы"],
+  ["вставать", "リᔑᒲ∋ʖ∋", "Глаголы"],
+  ["подниматься", "⫛⚍〒ᔑᒷᓭ", "Глаголы"],
+  ["спускаться", "フ∷↸⚍⎓ᔑ", "Глаголы"],
+  ["входить", "ᑑᒷ⫛ᔑᔑ∷", "Глаголы"],
+  ["выходить", "ꖌ⟁ꖌᔑ⚍ᓭ", "Глаголы"],
+  ["приходить", "ʖ∋⎓⚍∋ꖎ", "Глаголы"],
+  ["уходить", "ᒷᓭ∋ᓭᓭ⚍", "Глаголы"],
+  ["возвращаться", "⎓ᔑꖎᔑᒲ∋", "Глаголы"],
+  ["прибывать", "ᔑ∷勹ᔑ∷ᔑ", "Глаголы"],
+  ["отправляться", "⚍ᓭ∧￤ꖎ∋", "Глаголы"],
+  ["двигаться", "∋ꖎフ∷〒ᔑ", "Глаголы"],
+  ["останавливаться", "ᓭ⚍ʖ∋勹∋", "Глаголы"],
+  ["начинаться", "ᒲ∋ᔑ∷⍊ᔑ", "Глаголы"],
+  ["заканчиваться", "∷ᔑᓭ⚍↸⚍", "Глаголы"],
+  ["прекращать", "ꖎ∋ꖎ∋∧ᒷ", "Глаголы"],
+  ["сделать", "〒ᔑ⍊ᔑリ∋", "Глаголы"],
+  ["создавать", "勹∋リ∋⫛ᔑ", "Глаголы"],
+  ["ремонтировать", "⍊ᔑᑑ∋フ⚍", "Глаголы"],
+  ["включать", "↸⚍ᒷ∷ᑑ∋", "Глаголы"],
+  ["выключать", "∧ᒷ⚍∷ꖌᔑ", "Глаголы"],
+  ["запускать", "リ∋∷⚍ʖ⚍", "Глаголы"],
+  ["останавливать", "⫛ᔑᓭ⟁ᒷ∷", "Глаголы"],
+  ["изменять", "フ⚍↸ᒷ⎓⚍", "Глаголы"],
+  ["улучшать", "ᑑ∋⫛⚍ᔑꖎ", "Глаголы"],
+  ["ухудшать", "ꖌᔑꖌ⟁⚍∷", "Глаголы"],
+  ["вырастать", "ʖ⚍⎓ᔑ∋ᓭ", "Глаголы"],
+  ["уменьшать", "ᒷ∷∋ꖎᒲᔑ", "Глаголы"],
+  ["увеличивать", "⎓⚍∷ᔑ∷⚍", "Глаголы"],
+  ["сокращать", "ᔑꖎ勹∋ꖎᔑ", "Глаголы"],
+  ["расширять", "⚍∷∧ᒷ〒∋", "Глаголы"],
+  ["сжимать", "∋ᓭフ⚍ᓭ⟁", "Глаголы"],
+  ["считать", "ᒲᔑ∷⚍⫛⚍", "Глаголы"],
+  ["полагать", "∷⚍ᓭ⟁フ∷", "Глаголы"],
+  ["узнавать", "ꖎᔑ↸ᒷᑑᒷ", "Глаголы"],
+  ["помнить", "〒∋⫛⚍ꖌ⟁", "Глаголы"],
+  ["изучать", "ᓭ⟁ꖌ⟁ʖ∋", "Глаголы"],
+  ["преподавать", "勹ᔑ⎓ᔑᒷᓭ", "Глаголы"],
+  ["рассказывать", "⍊フ∋ꖎ⎓ᔑ", "Глаголы"],
+  ["сказать", "↸ᒷ∷ᔑᔑ∷", "Глаголы"],
+  ["разговаривать", "∧￤勹∋⚍ᓭ", "Глаголы"],
+  ["общаться", "リᔑ∧ᒷ∋ꖎ", "Глаголы"],
+  ["замечать", "⫛⚍フ⚍ᓭ⚍", "Глаголы"],
+  ["наблюдать", "フ∷ʖ⚍ᒲ∋", "Глаголы"],
+  ["обнаруживать", "ᑑᒷᔑꖎ∷ᔑ", "Глаголы"],
+  ["переписывать", "ꖌ⟁ᒲᔑꖎ∋", "Глаголы"],
+  ["чертить", "ʖ∋〒∋〒ᔑ", "Глаголы"],
+  ["печатать", "ᒷᓭ⍊フ勹∋", "Глаголы"],
+  ["набирать", "⎓ᔑリᔑ⍊ᔑ", "Глаголы"],
+  ["звонить", "ᔑ∷ᑑᒷ↸⚍", "Глаголы"],
+  ["приглашать", "⚍ᓭᒷᓭ∧ᒷ", "Глаголы"],
+  ["ожидать", "∋ꖎ⚍ᓭリ∋", "Глаголы"],
+  ["желать", "ᓭ⚍ᒲ∋⫛ᔑ", "Глаголы"],
+  ["нравиться", "ᒲ∋〒ᔑフ⚍", "Глаголы"],
+  ["ненавидеть", "∷ᔑ↸⚍ᑑ∋", "Глаголы"],
+  ["опасаться", "ꖎ∋⫛ᔑꖌᔑ", "Глаголы"],
+  ["радоваться", "〒ᔑꖌᔑʖ⚍", "Глаголы"],
+  ["грустить", "勹∋⎓⚍ᒷ∷", "Глаголы"],
+  ["сердиться", "⍊ᔑ∋ᓭ⎓⚍", "Глаголы"],
+  ["удивляться", "↸⚍ꖎᔑᔑꖎ", "Глаголы"],
+  ["удивлять", "∧ᒷ勹ᔑ⚍∷", "Глаголы"],
+  ["волноваться", "リ∋∧￤∋ᓭ", "Глаголы"],
+  ["вещь", "⫛ᔑフ∷ᒲᔑ", "Существительные"],
+  ["штука", "フ⚍ʖ∋∷⚍", "Существительные"],
+  ["предмет", "ᑑ∋ᔑ∷ꖎᔑ", "Существительные"],
+  ["объект", "ꖌᔑᓭ⚍〒∋", "Существительные"],
+  ["материал", "ʖ⚍ꖎ∋ᓭ⟁", "Существительные"],
+  ["материалка", "ᒷ∷⍊ᔑ勹ᔑ", "Существительные"],
+  ["устройство", "⎓⚍リ∋⍊フ", "Существительные"],
+  ["прибор", "ᔑꖎᑑ∋↸ᒷ", "Существительные"],
+  ["автомобиль", "⚍∷ᒷ∷∧￤", "Существительные"],
+  ["автобус", "∋ᓭ⚍∷リᔑ", "Существительные"],
+  ["мотоцикл", "ᒲᔑ∧￤ᒷᓭ", "Существительные"],
+  ["переулок", "∷⚍フ∷⎓ᔑ", "Существительные"],
+  ["перекрёсток", "ꖎᔑʖ∋ᔑ∷", "Существительные"],
+  ["тротуар", "〒∋ᔑ∷⚍ᓭ", "Существительные"],
+  ["здание", "ᓭ⟁ᓭ⚍∋ꖎ", "Существительные"],
+  ["помещение", "勹ᔑꖎ∋ᓭ⚍", "Существительные"],
+  ["спальня", "⍊フ⍊ᔑᒲ∋", "Существительные"],
+  ["коридор", "↸ᒷリ∋∷ᔑ", "Существительные"],
+  ["лестница", "∧￤ᑑ∋ꖎ∋", "Существительные"],
+  ["лифт", "リᔑᒷ∷〒ᔑ", "Существительные"],
+  ["балкон", "⫛⚍⚍∷勹∋", "Существительные"],
+  ["огород", "フ∷∷⚍⍊ᔑ", "Существительные"],
+  ["парк", "ᑑᒷᓭ⟁↸⚍", "Существительные"],
+  ["луг", "ꖌ⟁↸ᒷ∧ᒷ", "Существительные"],
+  ["материк", "ʖ∋⫛⚍リ∋", "Существительные"],
+  ["океан", "ᒷᓭꖌ⟁⫛ᔑ", "Существительные"],
+  ["ручей", "⎓ᔑ⎓ᔑフ⚍", "Существительные"],
+  ["пруд", "ᔑ∷∋ꖎᑑ∋", "Существительные"],
+  ["пляж", "⚍ᓭ∷ᔑꖌᔑ", "Существительные"],
+  ["почва", "∋ꖎ勹∋ʖ⚍", "Существительные"],
+  ["грязь", "ᓭ⚍∧ᒷᒷ∷", "Существительные"],
+  ["пыль", "ᒲ∋フ⚍⎓⚍", "Существительные"],
+  ["дым", "∷ᔑʖ⚍ᔑꖎ", "Существительные"],
+  ["пар", "ꖎ∋ᔑꖎ⚍∷", "Существительные"],
+  ["лёд", "〒ᔑᒲᔑ∋ᓭ", "Существительные"],
+  ["град", "勹∋〒∋ᒲᔑ", "Существительные"],
+  ["молния", "⍊ᔑ⍊フ∷⚍", "Существительные"],
+  ["гром", "↸⚍リᔑꖎᔑ", "Существительные"],
+  ["туман", "∧ᒷᑑᒷ〒∋", "Существительные"],
+  ["планета", "リ∋ᒷᓭᓭ⟁", "Существительные"],
+  ["космос", "⫛ᔑ⚍ᓭ勹ᔑ", "Существительные"],
+  ["вселенная", "フ⚍ᒲ∋⍊フ", "Существительные"],
+  ["темнота", "ᑑ∋〒ᔑ↸ᒷ", "Существительные"],
+  ["скорость", "ꖌᔑ↸⚍∧￤", "Существительные"],
+  ["движение", "ʖ⚍⫛ᔑリᔑ", "Существительные"],
+  ["покой", "ᒷ∷ꖌᔑ⫛⚍", "Существительные"],
+  ["шум", "⎓⚍⎓⚍フ∷", "Существительные"],
+  ["мелодия", "ᔑꖎ∋ᓭᑑᒷ", "Существительные"],
+  ["песня", "⚍∷ꖎᔑꖌ⟁", "Существительные"],
+  ["ритм", "∋ᓭ勹ᔑʖ∋", "Существительные"],
+  ["оттенок", "ᒲᔑᒷᓭᓭ⚍", "Существительные"],
+  ["длина", "∷⚍⚍ᓭᒲ∋", "Существительные"],
+  ["ширина", "ꖎᔑᒲ∋∷ᔑ", "Существительные"],
+  ["высота", "〒∋〒ᔑꖎ∋", "Существительные"],
+  ["глубина", "ᓭ⟁↸⚍〒ᔑ", "Существительные"],
+  ["объём", "勹ᔑ⫛ᔑ勹∋", "Существительные"],
+  ["количество", "⍊フꖌᔑ⍊ᔑ", "Существительные"],
+  ["качество", "↸ᒷ⎓⚍↸⚍", "Существительные"],
+  ["свойство", "∧￤∋ᓭ∧ᒷ", "Существительные"],
+  ["результат", "リᔑꖎᔑリ∋", "Существительные"],
+  ["сторона", "⫛⚍勹ᔑ⫛ᔑ", "Существительные"],
+  ["край", "フ∷∧￤フ⚍", "Существительные"],
+  ["центр", "ᑑᒷフ∷ᑑ∋", "Существительные"],
+  ["угол", "ꖌ⟁ʖ∋ꖌᔑ", "Существительные"],
+  ["поверхность", "ʖ∋ᔑ∷ʖ⚍", "Существительные"],
+  ["пространство", "ᒷᓭᓭ⚍ᒷ∷", "Существительные"],
+  ["расстояние", "⎓ᔑꖎ∋⎓⚍", "Существительные"],
+  ["направление", "ᔑ∷⍊ᔑᔑꖎ", "Существительные"],
+  ["маршрут", "⚍ᓭリ∋⚍∷", "Существительные"],
+  ["поездка", "∋ꖎᑑ∋∋ᓭ", "Существительные"]
+];
+
+/* 250 уникальных научных терминов: самостоятельные альбатроссианские корни
+   с классовыми маркерами ᓭ⚍ (биология) и ↸⚍ (география). */
+/* 250 научных терминов с самостоятельными фонологическими корнями.
+   Биологическая и географическая лексика имеет непересекающиеся начальные согласные;
+   формы не являются транслитерацией русских названий и не используют корень «альб». */
+const SCIENCE_WORDS = [
+  ['планта', 'ʖ￤ᒲ⚍ᒲ￤', 'Биология'],
+  ['флора', '⍊ᒷᒲ⚍リᒷ', 'Биология'],
+  ['фауна', 'ʖᒷ∷⚍↸⚍', 'Биология'],
+  ['биом', '∷⚍∏ᔑʖ∋', 'Биология'],
+  ['экосистема', 'リ‖┫ᒷリ￤', 'Биология'],
+  ['организм', 'ʖ⚍⫛‖⫛フ', 'Биология'],
+  ['аллель', 'ᒲ∋┫⚍↸￤', 'Биология'],
+  ['цитоплазма', '↸ᒷリフ∏ᒷ', 'Биология'],
+  ['мембрана', '┫フꖌ⚍∧ᔑ', 'Биология'],
+  ['ядро', '⍊⚍ʖ‖ꖌ‖', 'Биология'],
+  ['локус', '∷∋∧‖ʖフ', 'Биология'],
+  ['геном', '∷フリ∋ꖌ￤', 'Биология'],
+  ['генетика', '⍊‖⍊フ↸‖', 'Биология'],
+  ['хромосома', '∏⚍⫛フᒲ⚍', 'Биология'],
+  ['ДНК', '⍊ᔑ↸フ⫛￤', 'Биология'],
+  ['РНК', '∷ᔑʖ‖⫛ᔑ', 'Биология'],
+  ['протеин', 'ᒲ‖ʖ⚍∧フ', 'Биология'],
+  ['белок', '⍊∋⫛ᔑ┫フ', 'Биология'],
+  ['аминокислота', 'リ⚍↸フ┫‖', 'Биология'],
+  ['энзим', '∷⚍ᒲᒷꖌフ', 'Биология'],
+  ['фермент', 'リフᒲ∋⫛‖', 'Биология'],
+  ['гормон', '∏ᔑリフ∧ᒷ', 'Биология'],
+  ['витамин', 'ʖᔑリ‖↸∋', 'Биология'],
+  ['метаболизм', '⍊⚍ꖌᔑ∏‖', 'Биология'],
+  ['фотосинтез', 'ᒲᔑ⫛ᔑᒲ∋', 'Биология'],
+  ['хлорофилл', '⫛∋⫛フ∏∋', 'Биология'],
+  ['хлоропласт', '↸フꖌᒷ┫￤', 'Биология'],
+  ['митохондрия', 'リᔑ⍊ᒷ∧フ', 'Биология'],
+  ['рибосома', 'リᔑ┫∋⫛ᔑ', 'Биология'],
+  ['лизосома', '⫛ᔑ∷ᒷʖ⚍', 'Биология'],
+  ['генотип', '∷ᔑ⍊ᔑ∧ᒷ', 'Биология'],
+  ['орган', 'リ∋⍊∋ꖌフ', 'Биология'],
+  ['система органов', 'ᒲᔑ↸ᒷʖ⚍', 'Биология'],
+  ['скелет', 'リ‖⫛∋⍊⚍', 'Биология'],
+  ['мускул', 'ꖌ∋∏‖∧フ', 'Биология'],
+  ['мышца', '┫ᔑ∏‖リ⚍', 'Биология'],
+  ['нейрон', '∷ᔑ┫‖∧￤', 'Биология'],
+  ['нерв', '∏フᒲ‖ᒲフ', 'Биология'],
+  ['мозг', 'ᒲ∋↸フʖ￤', 'Биология'],
+  ['фенотип', '⍊フꖌ‖┫⚍', 'Биология'],
+  ['хроматин', '↸ᒷ∷ᒷᒲ∋', 'Биология'],
+  ['плазма', '⍊⚍∷フ⍊ᒷ', 'Биология'],
+  ['эритроцит', '⫛⚍ʖ‖∏ᒷ', 'Биология'],
+  ['лейкоцит', '∷⚍↸∋∷‖', 'Биология'],
+  ['тромбоцит', '⫛ᒷ∏ᒷ↸∋', 'Биология'],
+  ['иммунитет', '↸フʖ‖┫￤', 'Биология'],
+  ['антитело', '∷フ┫⚍⫛ᒷ', 'Биология'],
+  ['антиген', '∧￤∧ᒷꖌ∋', 'Биология'],
+  ['бактерия', '∧ᒷ∷￤∧∋', 'Биология'],
+  ['вирус', 'リᒷ∷‖⫛ᔑ', 'Биология'],
+  ['микроб', 'ʖᒷ∏‖リᔑ', 'Биология'],
+  ['нуклеотид', 'リᔑ↸‖∏ᔑ', 'Биология'],
+  ['мицелий', '⍊⚍ᒲᒷ┫⚍', 'Биология'],
+  ['спора', '∷フ⍊∋ᒲ￤', 'Биология'],
+  ['растение', 'リᒷ∏フ↸‖', 'Биология'],
+  ['кодон', '⍊‖ᒲ⚍∧‖', 'Биология'],
+  ['стебель', '∷∋∧ᔑʖ∋', 'Биология'],
+  ['экзон', 'ꖌ‖∏∋ʖ∋', 'Биология'],
+  ['интрон', '∷⚍ꖌ⚍∏フ', 'Биология'],
+  ['транскрипция', 'リ⚍↸‖⫛⚍', 'Биология'],
+  ['трансляция', '∷ᒷ⍊￤∷フ', 'Биология'],
+  ['пыльца', '⍊∋┫￤ᒲフ', 'Биология'],
+  ['опыление', 'ꖌ⚍∧∋┫‖', 'Биология'],
+  ['прорастание', 'ʖᒷ∏⚍ꖌ⚍', 'Биология'],
+  ['репликация', '┫ᔑ⫛ᔑ∧ᔑ', 'Биология'],
+  ['кустарник', '⫛￤↸⚍┫ᔑ', 'Биология'],
+  ['рекомбинация', 'ꖌ￤ᒲフ↸∋', 'Биология'],
+  ['кариотип', '∏‖↸∋⫛∋', 'Биология'],
+  ['папоротник', '∷￤∷‖⫛ᔑ', 'Биология'],
+  ['водоросль', '┫ᔑ∷￤ʖ‖', 'Биология'],
+  ['планктон', '↸￤┫‖ʖ⚍', 'Биология'],
+  ['зоопланктон', 'ʖ￤∷∋ᒲ⚍', 'Биология'],
+  ['фитопланктон', '↸フʖ￤リ∋', 'Биология'],
+  ['животное', 'リᔑリフ⫛‖', 'Биология'],
+  ['млекопитающее', 'ᒲᒷ∷ᔑ↸⚍', 'Биология'],
+  ['рептилия', '∧ᔑ∷フリᒷ', 'Биология'],
+  ['амфибия', '┫‖リᒷ∷⚍', 'Биология'],
+  ['эпигенетика', 'リフꖌ∋⫛ᔑ', 'Биология'],
+  ['гаплоид', '∏ᒷᒲ∋ꖌᔑ', 'Биология'],
+  ['диплоид', '∷ᒷᒲ⚍∧∋', 'Биология'],
+  ['гамета', 'ᒲᔑꖌ∋ꖌᔑ', 'Биология'],
+  ['моллюск', '⍊⚍∧フʖᔑ', 'Биология'],
+  ['сперматогенез', 'ʖᔑ↸∋∧ᒷ', 'Биология'],
+  ['паразит', '↸‖∏￤リフ', 'Биология'],
+  ['овогенез', 'ʖ⚍ꖌ‖∏∋', 'Биология'],
+  ['симбиоз', '⫛‖リᒷ∷フ', 'Биология'],
+  ['хищник', '∷⚍↸￤∏‖', 'Биология'],
+  ['жертва', 'ʖ⚍ᒲ￤ᒲᒷ', 'Биология'],
+  ['популяция', 'ᒲ￤┫⚍⫛ᔑ', 'Биология'],
+  ['вид', '┫￤┫ᔑ⫛￤', 'Биология'],
+  ['род', '∧⚍∧ᒷ∧￤', 'Биология'],
+  ['семейство', 'リ∋∷∋∧￤', 'Биология'],
+  ['эмбриогенез', 'リ∋ᒲフꖌフ', 'Биология'],
+  ['мутация', 'ᒲᒷ⫛⚍↸‖', 'Биология'],
+  ['адаптация', '↸ᒷꖌフ∏ᒷ', 'Биология'],
+  ['естественный отбор', '∏ᔑ⍊￤ꖌ‖', 'Биология'],
+  ['размножение', '∏‖⍊ᔑ⍊フ', 'Биология'],
+  ['половое размножение', '∷∋∏‖ᒲ∋', 'Биология'],
+  ['сперма', '⍊ᒷʖᒷリᒷ', 'Биология'],
+  ['сперматозоид', 'ʖ￤⍊￤⫛∋', 'Биология'],
+  ['яйцеклетка', '⍊￤ᒲ￤∧∋', 'Биология'],
+  ['эмбрион', 'リ￤ʖ∋↸ᒷ', 'Биология'],
+  ['зигота', '↸フ∏‖∷∋', 'Биология'],
+  ['оплодотворение', '┫ᒷ⫛￤⫛‖', 'Биология'],
+  ['беременность', '┫ᔑ↸ᔑ∧∋', 'Биология'],
+  ['рождение', '∧フʖᒷ∧ᔑ', 'Биология'],
+  ['деление', 'リフꖌ‖∷￤', 'Биология'],
+  ['митоз', '↸ᔑ∧ᒷ∷‖', 'Биология'],
+  ['мейоз', '⍊フᒲ∋ꖌ⚍', 'Биология'],
+  ['апоптоз', '↸‖ᒲ∋⍊ᒷ', 'Биология'],
+  ['регенерация', '∧⚍ꖌ‖∧∋', 'Биология'],
+  ['гомеостаз', '∏∋⍊ᔑʖ∋', 'Биология'],
+  ['пищеварение', 'ᒲ‖∷⚍ʖ∋', 'Биология'],
+  ['кислород', 'ꖌᔑʖ￤┫ᒷ', 'Биология'],
+  ['углекислый газ', 'リ∋⍊フ↸ᒷ', 'Биология'],
+  ['глюкоза', 'ᒲ⚍∧ᒷリ￤', 'Биология'],
+  ['липид', '∧ᒷ∧ᔑリᔑ', 'Биология'],
+  ['углевод', '∷￤↸ᔑ↸‖', 'Биология'],
+  ['целлюлоза', '∷∋リ∋∏⚍', 'Биология'],
+  ['крахмал', '∏ᔑ⍊⚍ʖ⚍', 'Биология'],
+  ['экология', '∷∋∧⚍ʖ⚍', 'Биология'],
+  ['биосфера', '∷￤ᒲ∋リフ', 'Биология'],
+  ['гликолиз', '∷‖⫛フᒲᔑ', 'Биология'],
+  ['анатомия', '┫‖ʖフ┫フ', 'Биология'],
+  ['физиология', 'ᒲ￤リ∋∷⚍', 'Биология'],
+  ['география', '⎓∋⋮￤ᓭ‖', 'География'],
+  ['геология', '〒ᒷᑑフ冫フ', 'География'],
+  ['геоморфология', '∴∋ꖎᔑꖎᒷ', 'География'],
+  ['картография', '∴‖冫∋⨿∋', 'География'],
+  ['топография', '∴ᔑꖎ∋⨿⚍', 'География'],
+  ['атлас', 'ꖎᒷᑑ⚍勹ᒷ', 'География'],
+  ['геокриология', 'ꖎ∋⨿ᔑ⨿フ', 'География'],
+  ['глобус', '⨿⚍⎓‖⨿ᔑ', 'География'],
+  ['геофизика', 'ꖎᒷ勹‖⎓フ', 'География'],
+  ['геохимия', 'ᑑフ〒フ⨿ᒷ', 'География'],
+  ['гидрография', '⋮⚍〒フ⋮￤', 'География'],
+  ['гидрогеология', '冫⚍⋮∋ꖎ‖', 'География'],
+  ['климатология', '∴‖∴∋〒￤', 'География'],
+  ['метеорология', '〒￤勹⚍ꖎᔑ', 'География'],
+  ['бухта', '⋮∋勹￤⋮‖', 'География'],
+  ['океанология', '∴⚍ᑑフ∴‖', 'География'],
+  ['архипелаг', '⨿フꖎ⚍⨿‖', 'География'],
+  ['полуостров', '⎓‖⨿⚍ᓭ⚍', 'География'],
+  ['перешеек', 'ᓭᒷᓭ⚍ᓭᔑ', 'География'],
+  ['побережье', '∴⚍ᓭフ〒フ', 'География'],
+  ['гляциология', 'ᓭ⚍勹フ∴ᒷ', 'География'],
+  ['вулканология', '∴￤ᓭᔑ冫ᔑ', 'География'],
+  ['геоид', 'ᓭ￤⋮‖ᑑ∋', 'География'],
+  ['морена', '冫∋勹‖⨿フ', 'География'],
+  ['батиметрия', '〒フꖎᔑ勹￤', 'География'],
+  ['картометрия', '〒ᒷ⨿‖⎓ᔑ', 'География'],
+  ['геоматика', 'ᓭᒷ∴￤⨿ᔑ', 'География'],
+  ['приток', '〒∋冫⚍〒フ', 'География'],
+  ['исток', 'ᑑ⚍∴￤ꖎ￤', 'География'],
+  ['устье', 'ᓭフ勹∋∴⚍', 'География'],
+  ['дельта', '勹‖冫ᒷ〒ᔑ', 'География'],
+  ['эстуарий', '冫‖勹フ⨿⚍', 'География'],
+  ['геотермия', 'ᓭᒷ冫￤∴フ', 'География'],
+  ['геодинамика', '〒￤〒⚍⨿⚍', 'География'],
+  ['изостазия', 'ᑑ‖ᓭᔑꖎ‖', 'География'],
+  ['литология', '勹￤⋮∋勹⚍', 'География'],
+  ['ледник', '⋮‖〒ᔑ⨿フ', 'География'],
+  ['айсберг', 'ᑑ‖⋮⚍ᑑフ', 'География'],
+  ['ледяной щит', '〒フ⋮‖⎓￤', 'География'],
+  ['петрография', '勹∋ᓭ‖〒￤', 'География'],
+  ['минералогия', '∴ᔑᑑ‖ᓭ￤', 'География'],
+  ['хребет', '冫‖⋮ᔑ⋮‖', 'География'],
+  ['горная цепь', '冫‖〒ᒷ⨿∋', 'География'],
+  ['вершина', '∴ᔑꖎ￤ꖎ‖', 'География'],
+  ['склон', 'ᑑ‖冫⚍冫￤', 'География'],
+  ['стратиграфия', '〒￤ᓭ∋⎓⚍', 'География'],
+  ['ущелье', 'ᓭ￤⎓フ∴‖', 'География'],
+  ['каньон', 'ᓭ￤∴⚍⋮‖', 'География'],
+  ['плато', 'ᓭ∋⎓￤∴ᔑ', 'География'],
+  ['равнина', '⎓‖〒∋∴∋', 'География'],
+  ['низменность', '勹⚍〒∋勹フ', 'География'],
+  ['возвышенность', 'ꖎ‖ᓭᔑ⎓⚍', 'География'],
+  ['котловина', '〒ᔑ∴￤〒⚍', 'География'],
+  ['вулкан', '⎓ᒷ∴∋∴‖', 'География'],
+  ['кратер', '⎓ᔑ〒‖⎓‖', 'География'],
+  ['лава', 'ꖎ￤ᑑ∋ᓭ∋', 'География'],
+  ['магма', '⋮フᓭフᑑᒷ', 'География'],
+  ['гейзер', '勹フ⨿￤∴ᔑ', 'География'],
+  ['горячий источник', '⎓∋⎓￤勹ᔑ', 'География'],
+  ['палеогеография', '勹￤〒フ⎓フ', 'География'],
+  ['разлом', '⋮フ⋮⚍ꖎ￤', 'География'],
+  ['тектоника', '⋮フ勹フᑑ￤', 'География'],
+  ['литосфера', 'ꖎ‖⨿ᔑ冫ᒷ', 'География'],
+  ['атмосфера', '⨿ᒷ勹∋勹⚍', 'География'],
+  ['гидросфера', 'ᓭᔑꖎ￤〒ᔑ', 'География'],
+  ['мантия', '⋮‖ꖎ∋⋮フ', 'География'],
+  ['ядро планеты', '⋮∋⨿⚍⎓フ', 'География'],
+  ['плита', 'ᑑ⚍〒フ⨿￤', 'География'],
+  ['осадок', '〒‖∴ᔑ⨿￤', 'География'],
+  ['порода', '⨿フꖎ￤⎓ᔑ', 'География'],
+  ['минерал', '⎓⚍ᑑ‖ᓭ￤', 'География'],
+  ['кристалл', '冫ᒷꖎ￤ᓭ∋', 'География'],
+  ['палеоклиматология', '冫‖〒ᔑ⨿ᒷ', 'География'],
+  ['геоэкология', '⎓￤冫‖勹フ', 'География'],
+  ['геосинклиналь', '⋮ᔑ⋮ᒷ⋮⚍', 'География'],
+  ['орогенез', 'ᑑ⚍⋮∋ᓭᒷ', 'География'],
+  ['степь', '冫ᔑ冫∋∴⚍', 'География'],
+  ['саванна', '∴⚍勹∋ꖎフ', 'География'],
+  ['денудация', '〒￤⋮‖⨿‖', 'География'],
+  ['тайга', '⨿￤∴∋ᑑ‖', 'География'],
+  ['тундра', '〒フ勹‖ᓭフ', 'География'],
+  ['эрозия', '冫￤〒￤⋮ᒷ', 'География'],
+  ['абразия', '冫￤勹‖ꖎᒷ', 'География'],
+  ['прерия', '〒∋勹ᔑ〒ᔑ', 'География'],
+  ['климат', '⨿ᒷ∴ᒷ∴‖', 'География'],
+  ['аккумуляция', '∴ᔑᓭ⚍ꖎフ', 'География'],
+  ['температура', 'ᓭ‖⨿フᑑフ', 'География'],
+  ['осадки', 'ᑑ￤ᑑ‖⨿∋', 'География'],
+  ['дефляция', '冫‖冫ᒷ⎓‖', 'География'],
+  ['суффозия', '〒∋〒‖ᑑ∋', 'География'],
+  ['карст', 'ꖎ￤ᑑ‖冫ᒷ', 'География'],
+  ['дюна', '⨿∋∴ᔑ∴フ', 'География'],
+  ['циклон', '∴フ勹‖冫ᔑ', 'География'],
+  ['антициклон', 'ᓭᔑ∴⚍勹ᔑ', 'География'],
+  ['ураган', '∴ᔑᓭᒷ∴‖', 'География'],
+  ['тайфун', '〒ᔑ∴‖〒∋', 'География'],
+  ['торнадо', 'ᓭフ⨿‖⎓￤', 'География'],
+  ['муссон', '∴フ∴‖ꖎ∋', 'География'],
+  ['пассат', 'ᑑᒷ勹∋勹‖', 'География'],
+  ['атмосферное давление', '⋮ᒷ冫‖ᑑ￤', 'География'],
+  ['влажность', 'ᑑフ〒￤⎓‖', 'География'],
+  ['бархан', 'ᓭ‖ꖎᔑ⎓‖', 'География'],
+  ['фьорд', '〒ᒷᑑᒷ〒フ', 'География'],
+  ['роса', '⋮￤〒￤勹⚍', 'География'],
+  ['иней', '∴ᔑ⋮⚍ᓭᒷ', 'География'],
+  ['сезон', '冫￤冫ᔑꖎ￤', 'География'],
+  ['экватор', 'ꖎ⚍∴ᒷᓭᒷ', 'География'],
+  ['меридиан', '⎓⚍⋮￤勹ᒷ', 'География'],
+  ['параллель', 'ꖎフ〒￤〒ᒷ', 'География'],
+  ['широта', '⎓∋冫ᔑᑑフ', 'География'],
+  ['долгота', '⨿∋⋮ᔑ∴‖', 'География'],
+  ['полюс', 'ᑑ￤ꖎフ∴‖', 'География'],
+  ['тропик', '⨿‖冫∋⋮フ', 'География'],
+  ['полярный круг', '⋮￤ᓭ∋⋮ᒷ', 'География'],
+  ['часовой пояс', '⋮ᒷ勹￤ᑑ￤', 'География'],
+  ['высота над уровнем моря', '冫フ冫⚍⋮‖', 'География'],
+  ['координата', '⨿ᔑ⋮ᒷᓭ∋', 'География'],
+  ['масштаб', '⨿‖ꖎ∋⎓ᔑ', 'География'],
+  ['легенда карты', 'ꖎ‖ᑑ⚍⨿‖', 'География'],
+  ['лагуна', '⨿⚍ꖎ∋⎓‖', 'География'],
+  ['регион', '勹￤〒∋⋮ᒷ', 'География'],
+  ['район', '⋮ᔑ⨿ᒷ〒フ', 'География'],
+  ['атолл', '〒￤ꖎフ⎓￤', 'География'],
+  ['риф', '⎓ᔑ⨿∋勹∋', 'География'],
+  ['шельф', 'ꖎ￤⎓ᔑ冫⚍', 'География']
+];
+for(const [word, alb, category] of EXTRA_WORDS){
+  DICTIONARY.push([word, alb, category]);
+}
+for(const [word, alb, category] of SCIENCE_WORDS){
+  DICTIONARY.push([word, alb, category]);
+}
+const RU2ALB = {}, ALB2RU = {}, RU_CANONICAL = {};
+function normalizeRuKey(value){
+  return String(value || "").toLocaleLowerCase("ru-RU").replace(/\s+/g," ").trim();
+}
+// Удаляем точные повторы русских слов и альбатроссианских форм.
+// «все» и «всё» — разные слова, поэтому ё и е не объединяются.
+const uniqueDictionary = [];
+const seenRussianWords = new Set();
+const seenAlbatrossianWords = new Set();
+for(const entry of DICTIONARY){
+  const key = normalizeRuKey(entry[0]);
+  const albKey = String(entry[1] || "").replace(/\s+/g," ").trim();
+  if(!key || !albKey || seenRussianWords.has(key) || seenAlbatrossianWords.has(albKey)) continue;
+  seenRussianWords.add(key);
+  seenAlbatrossianWords.add(albKey);
+  uniqueDictionary.push(entry);
+}
+DICTIONARY.splice(0, DICTIONARY.length, ...uniqueDictionary);
+DICTIONARY.forEach(([ru,alb,cat])=>{
+  const key=normalizeRuKey(ru);
+  if(!RU2ALB[key]){ RU2ALB[key] = alb; RU_CANONICAL[key] = ru; }
+  if(!ALB2RU[alb]) ALB2RU[alb] = ru;
+});
+
+/* ============================================================
+   ТРАНСЛИТЕРАЦИЯ
+   ============================================================ */
+function translitRuToAlb(text){
+  let out = "";
+  for(const ch of String(text).toLocaleLowerCase("ru-RU")){
+    if(RU2SYM[ch]) out += RU2SYM[ch];
+    else if(/[\s0-9.,!?;:—\-()]/.test(ch)) out += ch;
+  }
+  return out.split("ᔑꖎʖ").join("ᔑꖎ⁖ʖ");
+}
+function translitAlbToRu(text){
+  let out = "";
+  for(const ch of text){
+    if(SYM_SOUND[ch] !== undefined){
+      out += SYM_SOUND[ch];
+    } else if(/[a-zA-Zа-яА-Я0-9\s.,!?;:—\-]/.test(ch)){
+      out += ch;
+    }
+  }
+  return out;
+}
+
+/* ============================================================
+   ОЗВУЧИВАНИЕ — ИСПРАВЛЕНО: слово читается ЦЕЛИКОМ
+   ============================================================ */
+let ruVoice = null;
+function pickVoice(){
+  if(!("speechSynthesis" in window)) return;
+  const voices = speechSynthesis.getVoices();
+  ruVoice = voices.find(v=>v.lang && v.lang.toLowerCase().startsWith("ru")) || null;
+}
+if("speechSynthesis" in window){
+  pickVoice();
+  speechSynthesis.onvoiceschanged = pickVoice;
+}
+
+/* Собрать альбатроссианскую строку в читаемое русское слово/фразу */
+function albToReadable(str){
+  let out = "";
+  let prevWasLetter = false;
+  for(const ch of str){
+    if(SYM_SOUND[ch] !== undefined){
+      out += SYM_SOUND[ch];
+      prevWasLetter = true;
+    } else if(ch === " "){
+      if(prevWasLetter) out += " ";
+      prevWasLetter = false;
+    } else if(/[.,!?;:—]/.test(ch)){
+      out += ch;
+      prevWasLetter = false;
+    } else {
+      out += ch;
+      prevWasLetter = false;
+    }
+  }
+  return out.replace(/\s+([.,!?;:—])/g,"$1").replace(/\s+/g," ").trim();
+}
+
+function speak(text, lang="ru"){
+  if(!("speechSynthesis" in window)){ toast("Озвучивание не поддерживается"); return; }
+  if(!text) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = lang;
+  u.rate = 0.85;
+  u.pitch = 1;
+  if(lang.startsWith("ru") && ruVoice) u.voice = ruVoice;
+  speechSynthesis.speak(u);
+}
+function speakAlb(albText){
+  speak(albToReadable(albText), "ru");
+}
+
+document.addEventListener("click", (e)=>{
+  const btn = e.target.closest("button.speak");
+  if(!btn) return;
+  e.stopPropagation();
+  if(btn.dataset.name){
+    speak(btn.dataset.name, "ru");
+    btn.classList.add("playing");
+    setTimeout(()=>btn.classList.remove("playing"), 900);
+    return;
+  }
+  if(btn.dataset.sound){
+    speak(btn.dataset.sound, "ru");
+    btn.classList.add("playing");
+    setTimeout(()=>btn.classList.remove("playing"), 900);
+    return;
+  }
+  const holder = btn.closest("[data-say]");
+  if(holder){
+    speakAlb(holder.dataset.say);
+    btn.classList.add("playing");
+    setTimeout(()=>btn.classList.remove("playing"), 900);
+    return;
+  }
+  const wordHolder = btn.closest("[data-word]");
+  if(wordHolder){
+    speakAlb(wordHolder.dataset.word);
+    btn.classList.add("playing");
+    setTimeout(()=>btn.classList.remove("playing"), 900);
+  }
+});
+
+/* ============ УТИЛИТЫ ============ */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+let toastTimer;
+function toast(msg){
+  const t = $("#toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove("show"), 1600);
+}
+function getDeclensionFromRu(ru){
+  if(!ru) return 1;
+  const w = ru.toLowerCase().replace(/ё/g,"е");
+  if(/(?:о|е|мя)$/.test(w)) return 2;
+  if(/(?:а|я)$/.test(w) && !/(?:мужчина|папа|дядя|дедушка)$/.test(w)) return 2;
+  return 1;
+}
+function getDeclensionFromAlb(word){
+  return getDeclensionFromRu(ALB2RU[word]);
+}
+function applyCase(word, caseSym, ruWord){
+  if(!caseSym) return word;
+  const decl = ruWord ? getDeclensionFromRu(ruWord) : getDeclensionFromAlb(word);
+  return word + (decl === 2 ? "ソ" : "") + caseSym;
+}
+
+/* ============ НАВИГАЦИЯ ============ */
+$$("#nav button").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    $$("#nav button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    $$("main section").forEach(s=>s.classList.remove("active"));
+    $("#"+btn.dataset.tab).classList.add("active");
+    window.scrollTo({top:0, behavior:"smooth"});
+  });
+});
+
+/* ============ АЛФАВИТ ============ */
+(function(){
+  const body = $("#alphabet-body");
+  const half = Math.ceil(ALPHABET.length/2);
+  let html = "";
+  for(let i=0;i<half;i++){
+    const a = ALPHABET[i];
+    const b = ALPHABET[i+half] || ["","",""];
+    const aSound = a[1].replace(/[[\]]/g,"").split("/")[0];
+    const bSound = b[1] ? b[1].replace(/[[\]]/g,"").split("/")[0] : "";
+    html += `<tr>
+      <td class="sym">${a[0]}</td><td>${a[1]}</td><td>${a[2]}</td>
+      <td style="white-space:nowrap">
+        <button class="speak" title="Звук" data-sound="${aSound}">🔊</button>
+        <button class="speak" title="Имя знака" data-name="${a[2]}">🗣</button>
+      </td>
+      <td class="sym">${b[0]}</td><td>${b[1]}</td><td>${b[2]}</td>
+      <td style="white-space:nowrap">${b[0] ? `
+        <button class="speak" title="Звук" data-sound="${bSound}">🔊</button>
+        <button class="speak" title="Имя знака" data-name="${b[2]}">🗣</button>` : ""}</td>
+    </tr>`;
+  }
+  body.innerHTML = html;
+})();
+
+/* ============ ПАДЕЖИ ============ */
+(function(){
+  const body = $("#cases-body");
+  body.innerHTML = CASES.map(c=>`
+    <tr>
+      <td>${c.n}</td>
+      <td><b>${c.name}</b><br><span class="muted">${c.note}</span></td>
+      <td>${c.q}</td>
+      <td class="sym">${c.end}</td>
+      <td class="case-ex">${c.sym ? "∷⚍ᒲ"+c.sym : "∷⚍ᒲ"}</td>
+      <td class="sym">${c.sym ? "ソ"+c.sym : "—"}</td>
+      <td class="case-ex">${c.sym ? "ᒲᔑꖌᔑソ"+c.sym : "ᒲᔑꖌᔑ"}</td>
+    </tr>
+  `).join("");
+})();
+
+/* ============ СЛОВАРЬ ============ */
+(function(){
+  const cats = [...new Set(DICTIONARY.map(w=>w[2]))];
+  const catSel = $("#dict-cat");
+  cats.forEach(c=>{
+    const o = document.createElement("option");
+    o.value = c; o.textContent = c; catSel.appendChild(o);
+  });
+
+  const caseSel = $("#dict-case");
+  caseSel.innerHTML = `<option value="">— словарная форма —</option>` +
+    CASES.map(c=>`<option value="${c.sym}">${c.n}. ${c.name} (1-е: ${c.end}; 2-е: ${c.sym ? "ソ"+c.sym : "—"})</option>`).join("");
+
+  const body = $("#dict-body");
+  const search = $("#dict-search");
+  const count = $("#dict-count");
+
+  function render(){
+    const q = search.value.trim().toLowerCase();
+    const cat = catSel.value;
+    const cs = caseSel.value;
+    const rows = DICTIONARY.filter(w=>{
+      const okQ = !q || w[0].toLowerCase().includes(q) || w[1].includes(q);
+      const okC = !cat || w[2] === cat;
+      return okQ && okC;
+    });
+    body.innerHTML = rows.map(w=>{
+      const idx = DICTIONARY.indexOf(w)+1;
+      const shown = applyCase(w[1], cs);
+      return `<tr>
+        <td>${idx}</td>
+        <td>${w[0]}</td>
+        <td class="sym"><span class="dict-word" data-word="${shown}">${shown}
+          <button class="speak" title="Произнести">🔊</button>
+        </span></td>
+        <td>${w[2]}</td>
+      </tr>`;
+    }).join("");
+    count.textContent = `Показано: ${rows.length} из ${DICTIONARY.length}` + (cs ? " · с падежным окончанием" : "");
+  }
+  search.addEventListener("input", render);
+  catSel.addEventListener("change", render);
+  caseSel.addEventListener("change", render);
+  $("#dict-reset").addEventListener("click", ()=>{
+    search.value = ""; catSel.value = ""; caseSel.value = ""; render();
+    toast("Фильтры сброшены");
+  });
+  render();
+})();
+
+/* ============ ФРАЗЫ ============ */
+const PHRASES = [
+  ["ꖎ‖ꖌʖフᑑ∋!","Привет!"],
+  ["ᒲ￤ ᒷ⋮ リフᒲ ᒲᔑ∷ᔑ.","Моё имя — Мара."],
+  ["ᒲ￤ ꖌ￤∷￤ꖎꖎ.","Я Кирилл."],
+  ["勹⚍ ꖎ∋ʖ￤ ᒷ?","Как ты?"],
+  ["ᒲ￤ ꖎᔑ リᔑᒲ.","Я хороший человек."],
+  ["ᒲᔑꖌᔑ ᓭᔑꖎ ∷ᒷꖌ.","Корова ест траву."],
+  ["ᒲ￤ ᒲᔑꖌᔑ勹 ⍊ᔑ￤.","Я вижу корову (направительный)."],
+  ["ᒲ￤ ᒲᔑꖌᔑ勹 リフ ⍊ᔑ￤ ꖌᔑ.","Я не видел корову."],
+  ["ᒲᔑꖌᔑᓭ ⚍ꖎ ∏フꖌ ⟠.","Коровы будут пить воду."],
+  ["ꖎᔑ リᔑᒲ ∷⚍ᒲ┫ ⚍ꖌ.","Хороший человек идёт в доме."],
+  ["∏ᔑ∷フ⎓ ᓭᔑᒲᔑ∷ ⚍ꖌ ꖌᔑ.","С другом пошёл от семьи."],
+  ["∏￤勹 ᓭᔑꖎ∷ ʖ￤┫⟁∷.","Птица летит с травы."],
+  ["∏ᔑ ⚍ꖌ!","Иди!"],
+  ["ᒲ￤ 冫フ勹 ᓭꖎᒷ∏.","Я хочу спать."],
+  ["勹⚍ ᒲフ┫ ⚍ꖌ ᒷ?","Ты можешь идти?"],
+  ["ᒲ￤ ᒷ⋮ ∷⚍ᒲ┫ ʖᔑꖌ ∷ᒷꖌ.","В моём доме есть хлеб."],
+  ["ᓭᔑ ꖎᔑ リᔑᒲ ┫ᒷꖌ⟁リ ꖌᔑ.","Он был хорошим человеком."],
+  ["ᒲ￤ ᓭᔑ勹 リフ ⍊ᔑ￤.","Я его не вижу."],
+  ["ᓭフꖎ勹 ∏ᔑ ⍊ᔑ￤!","Смотри на солнце!"],
+  ["∏ᔑ∷フ⁘ ꖎ‖ꖌʖフᑑ∋!","О, друг, привет!"],
+  ["ᒲ￤ᓭ ᓭᔑᒲᔑ⎓ ᒲフ∷ᔑ∷ ⚍ꖌ.","Мы с семьёй идём от моря."],
+  ["ᓭ￤ꖌ⫛⟠ ᒲ￤ᓭ ᒷ⋮ 冫∋ᒲ∴‖ꖎ勹⟁.","Справедливость — наша цель."],
+  ["ᒲ￤ ꖌリ￤┫勹 〒￤勹.","Я читаю книгу."],
+  ["ᓭフꖎ ʖꖎ⚍.","Солнце синее."],
+  ["∷ᔑ∷ᒲ￤ꖎフ 勹⟁∴フ ᒷ?","Как дела?"],
+  ["勹⚍ ∏フꖌ ↸￤ꖌ∋勹 ᒷ?","Ты пьёшь чай?"]
+];
+(function(){
+  $("#phrases-list").innerHTML = PHRASES.map(([alb, ru])=>
+    `<div class="example" data-say="${alb}">
+      <button class="speak" title="Произнести">🔊</button>
+      <div class="body">${alb}<span class="tr">${ru}</span></div>
+    </div>`
+  ).join("");
+})();
+
+/* ============================================================
+   ПЕРЕВОДЧИК
+   ============================================================ */
+const VERBS_SET = new Set(DICTIONARY.filter(d=>d[2]==="Глаголы").map(d=>d[0]));
+const SUBJ_SET = new Set(DICTIONARY.filter(d=>["Местоимения","Имена"].includes(d[2])).map(d=>d[0]));
+const OBJ_SET = new Set(DICTIONARY.filter(d=>["Природа","Животные","Быт","Абстрактные","Общество","Наука","Техника","Люди","Имена","Чувства","Еда","Тело","Одежда","Профессии","Места","Предметы","Существительные","Растения и животные","Время","Альбатрос","Биология","География"].includes(d[2])).map(d=>d[0]));
+const ADJ_SET = new Set(DICTIONARY.filter(d=>d[2]==="Прилагательные").map(d=>d[0]));
+
+// Индексы основ позволяют находить не только падежные, но и личные/повелительные
+// формы глаголов: «вставай» -> «вставать», «читай» -> «читать».
+const RU_STEM_INDEX = new Map();
+const RU_VERB_STEM_INDEX = new Map();
+function addRuStem(stem, lemma){
+  if(stem && stem.length >= 2 && !RU_STEM_INDEX.has(stem)) RU_STEM_INDEX.set(stem, lemma);
+}
+function addRuVerbStem(stem, lemma){
+  if(stem && stem.length >= 2 && !RU_VERB_STEM_INDEX.has(stem)) RU_VERB_STEM_INDEX.set(stem, lemma);
+}
+function buildRuStemIndex(){
+  for(const lemma of Object.keys(RU2ALB)){
+    const w = lemma.replace(/ё/g,"е");
+    addRuStem(w, lemma);
+    // Обычные основы существительных и прилагательных.
+    for(const end of ["а","я","о","е","ь","й","ый","ий","ой","ая","яя","ое","ее","ые","ие","ия","мя"]) {
+      if(w.endsWith(end) && w.length-end.length >= 2) addRuStem(w.slice(0,-end.length), lemma);
+    }
+    // Чередование беглой гласной: отец -> отц, огонь -> огн, день -> дн.
+    if(/ец$/.test(w)) addRuStem(w.slice(0,-2)+"ц", lemma);
+    if(/ё?нь$/.test(w)) addRuStem(w.replace(/ё?нь$/, "н"), lemma);
+    if(/ень$/.test(w)) addRuStem(w.slice(0,-3)+"н", lemma);
+    if(/ок$/.test(w)) addRuStem(w.slice(0,-2)+"к", lemma);
+    if(/ек$/.test(w)) addRuStem(w.slice(0,-2)+"к", lemma);
+    if(VERBS_SET.has(lemma)){
+      // читать -> чита-, вставать -> встава-, говорить -> говори-/говор-
+      if(/ать$|ять$|еть$|уть$|ыть$/.test(w)){
+        addRuVerbStem(w.slice(0,-2), lemma); // основа настоящего времени / повелительной формы
+        addRuVerbStem(w.slice(0,-3), lemma); // основа прошедшего времени
+      }
+      if(/вать$/.test(w)) addRuVerbStem(w.slice(0,-4), lemma); // давать -> даю, вставать -> встаю
+      if(/ить$/.test(w)){
+        addRuVerbStem(w.slice(0,-2), lemma);
+        addRuVerbStem(w.slice(0,-3), lemma);
+      }
+      if(/ти$/.test(w)) addRuVerbStem(w.slice(0,-2), lemma);
+      if(/чь$/.test(w)) addRuVerbStem(w.slice(0,-2), lemma);
+    }
+  }
+}
+buildRuStemIndex();
+function findRu(word){
+  const w = normalizeRuKey(word).replace(/[.,!?;:]+$/g,"");
+  if(RU2ALB[w]) return {ru:RU_CANONICAL[w], alb:RU2ALB[w]};
+  const verbForms = {
+    "вижу":"видеть","видишь":"видеть","видит":"видеть","видим":"видеть","видите":"видеть","видят":"видеть",
+    "ем":"есть","ешь":"есть","ест":"есть","едим":"есть","едите":"есть","едят":"есть",
+    "пью":"пить","пьёшь":"пить","пьешь":"пить","пьёт":"пить","пьет":"пить","пьём":"пить","пьем":"пить","пьют":"пить",
+    "иду":"идти","идёшь":"идти","идешь":"идти","идёт":"идти","идет":"идти","идём":"идти","идем":"идти","идут":"идти",
+    "бегу":"бежать","бежишь":"бежать","бежит":"бежать","бегут":"бежать",
+    "сплю":"спать","спишь":"спать","спит":"спать","спят":"спать",
+    "читаю":"читать","читаешь":"читать","читает":"читать","читаем":"читать","читают":"читать",
+    "пишу":"писать","пишешь":"писать","пишет":"писать","пишут":"писать",
+    "говорю":"говорить","говоришь":"говорить","говорит":"говорить","говорят":"говорить",
+    "знаю":"знать","знаешь":"знать","знает":"знать","знают":"знать",
+    "думаю":"думать","думаешь":"думать","думает":"думать","думают":"думать",
+    "хочу":"хотеть","хочешь":"хотеть","хочет":"хотеть","хотим":"хотеть","хотят":"хотеть",
+    "могу":"мочь","можешь":"мочь","может":"мочь","можем":"мочь","могут":"мочь",
+    "делаю":"делать","делаешь":"делать","делает":"делать","делают":"делать",
+    "люблю":"любить","любишь":"любить","любит":"любить","любят":"любить",
+    "живу":"жить","живёшь":"жить","живешь":"жить","живёт":"жить","живет":"жить","живут":"жить",
+    "виждал":"видеть","видел":"видеть","видела":"видеть","видели":"видеть",
+    "сказал":"говорить","сказала":"говорить","сказали":"говорить",
+    "сделал":"делать","сделала":"делать","сделали":"делать",
+    "иди":"идти","идите":"идти","беги":"бежать","бегите":"бежать",
+    "спи":"спать","спите":"спать","пей":"пить","пейте":"пить",
+    "будь":"быть","будьте":"быть","пиши":"писать","пишите":"писать",
+    "вставай":"вставать","вставайте":"вставать",
+    "читай":"читать","читайте":"читать","говори":"говорить","говорите":"говорить",
+    "делай":"делать","делайте":"делать"
+  };
+  const verbLemma=verbForms[w] || verbForms[w.replace(/ё/g,"е")];
+  if(verbLemma && RU2ALB[normalizeRuKey(verbLemma)]){const key=normalizeRuKey(verbLemma);return {ru:RU_CANONICAL[key],alb:RU2ALB[key]};}
+  // Универсальное распознавание распространённых окончаний глаголов,
+  // включая повелительное наклонение: «вставай», «читайте», «пиши».
+  const verbEndings = ["айтесь","яйтесь","итесь","уйте","айте","яйте","ейте","ывайте","ивайте","ывай","ивай","уйте","айте","яйте","ейте","яй","ай","ей","уй","ой","й","ешь","ишь","ет","ит","ем","им","ете","ите","ют","ут","ят","ат","ал","ала","ало","али","ался","алась","алось","ались","ила","или","ило","ил","ю","у","и","ывать","ивать","аться","яться","ать","ять","ить","еть","уть","ыть","ть"];
+  for(const ending of verbEndings){
+    if(w.endsWith(ending) && w.length-ending.length>=2){
+      const stem=w.slice(0,-ending.length);
+      const lemma=RU_VERB_STEM_INDEX.get(stem);
+      if(lemma){const key=normalizeRuKey(lemma);return {ru:RU_CANONICAL[key]||lemma,alb:RU2ALB[key]};}
+    }
+  }
+  const prep = w;
+  if(RU2ALB[prep]) return {ru:RU_CANONICAL[prep], alb:RU2ALB[prep]};
+  const endings = ["иями","ями","ами","ями","ого","его","ому","ему","ыми","ими","ою","ею","ией","ией","ией","ах","ях","ам","ям","ов","ев","ей","ой","ый","ий","ым","им","ом","ем","ую","юю","ая","яя","ое","ее","ые","ие","а","я","у","ю","е","и","ы","о","ь"];
+  const candidates = new Set();
+  for(const source of [w,prep]){
+    for(const e of endings) if(source.endsWith(e) && source.length-e.length>=2) candidates.add(source.slice(0,-e.length));
+    candidates.add(source);
+  }
+  const ordered = [...candidates].sort((a,b)=>b.length-a.length);
+  for(const stem of ordered){
+    if(RU2ALB[stem]) return {ru:RU_CANONICAL[stem],alb:RU2ALB[stem]};
+    const lemma = RU_STEM_INDEX.get(stem);
+    if(lemma){const key=normalizeRuKey(lemma);return {ru:RU_CANONICAL[key]||lemma,alb:RU2ALB[key]};}
+  }
+  return null;
+}
+function findAlb(word){
+  const w=word.trim().replace(/[.,!?;:]+$/,"");
+  if(ALB2RU[w]) return {ru:ALB2RU[w],alb:w,caseSym:"",caseName:""};
+  const endings=[];
+  CASES.forEach(c=>{if(c.sym){endings.push({suffix:"ソ"+c.sym,c,decl:2});endings.push({suffix:c.sym,c,decl:1});}});
+  endings.sort((a,b)=>b.suffix.length-a.suffix.length);
+  for(const item of endings){
+    if(w.endsWith(item.suffix) && w.length>item.suffix.length){
+      let base=w.slice(0,-item.suffix.length);
+      // Сначала проверяем полную основу: конечное ᓭ может быть частью корня (например, «мы»).
+      if(ALB2RU[base]) return {ru:ALB2RU[base],alb:base,caseSym:item.suffix,caseName:item.c.name,declension:item.decl,plural:false};
+      const plural=base.endsWith("ᓭ");
+      if(plural) base=base.slice(0,-1);
+      if(plural && ALB2RU[base]) return {ru:ALB2RU[base],alb:base,caseSym:"ᓭ"+item.suffix,caseName:item.c.name,declension:item.decl,plural:true};
+    }
+  }
+  // Множественное число без падежного окончания.
+  if(w.endsWith("ᓭ") && ALB2RU[w.slice(0,-1)]){
+    const base=w.slice(0,-1);
+    return {ru:ALB2RU[base],alb:base,caseSym:"ᓭ",caseName:"множественное число",plural:true};
+  }
+  return {ru:null,alb:w,caseSym:"",caseName:"",translit:translitAlbToRu(w)};
+}
+
+function detectCase(prep, isDirectObject){
+  const p = (prep||"").toLowerCase();
+  if(p === "в" || p === "во" || p === "на") return {sym:"┫", name:"Местный"};
+  if(p === "к" || p === "ко") return {sym:"↸", name:"Указательный"};
+  if(p === "с" || p === "со") return {sym:"⎓", name:"Действовательный"};
+  if(p === "из" || p === "от") return {sym:"∷", name:"Брательный"};
+  if(isDirectObject) return {sym:"勹", name:"Направительный"};
+  return {sym:"", name:"Прямой"};
+}
+
+function translitRuWord(word){
+  return translitRuToAlb(word);
+}
+
+/* РУССКИЙ → АЛЬБАТРОССИАНСКИЙ */
+function parseRu(text){
+  const clean = text.trim();
+  if(!clean) return {result:"",notes:""};
+  const isQuestion = /\?/.test(clean);
+  const rawTokens = clean.match(/[А-Яа-яЁё]+(?:-[А-Яа-яЁё]+)*|[0-9]+|[.,!?;:]/g) || [];
+  const tokens = rawTokens.filter(t=>!/^[.,!?;:]$/.test(t));
+  const lower = tokens.map(t=>t.toLowerCase().replace(/ё/g,"е"));
+  const isNeg = lower.includes("не") || lower.includes("ни");
+  const tenseFuture = lower.some(t=>["будет","будут","буду","будешь","будем","будете"].includes(t));
+
+  const items = tokens.map((token,index)=>{
+    const found = findRu(token);
+    if(!found) return {token,index,ru:token.toLowerCase(),alb:translitRuWord(token),cat:"unknown",known:false};
+    const row = DICTIONARY.find(d=>normalizeRuKey(d[0])===normalizeRuKey(found.ru));
+    return {token,index,ru:found.ru,alb:found.alb,cat:row?row[2]:"",known:true};
+  });
+  const tensePast = items.some(x=>x.known && VERBS_SET.has(x.ru) && /(?:л|ла|ло|ли|лся|лась|лось|лись)$/.test(lower[x.index]));
+  const imperativeForms = new Set([
+    "иди","идите","беги","бегите","спи","спите","пей","пейте","будь","будьте",
+    "пиши","пишите","вставай","вставайте","читай","читайте","говори","говорите",
+    "делай","делайте"
+  ]);
+  const isImperative = items.some(x=>x.known && VERBS_SET.has(x.ru) && imperativeForms.has(lower[x.index]));
+
+  const functionWords = new Set(["Служебные","Местоимения","Вопросительные"]);
+  const verbItems = items.filter(x=>x.known && VERBS_SET.has(x.ru));
+  const verb = verbItems.length ? verbItems[verbItems.length-1] : null;
+  const subject = items.find(x=>x.known && x!==verb &&
+    (SUBJ_SET.has(x.ru) || ["Люди","Профессии"].includes(x.cat)));
+  const adjectiveItems = items.filter(x=>x.known && ADJ_SET.has(x.ru));
+  const objectItems = items.filter(x=>x.known && x!==verb && x!==subject &&
+    !ADJ_SET.has(x.ru) && !functionWords.has(x.cat) &&
+    !["Имена"].includes(x.cat));
+  const consumed = new Set([verb,subject,...adjectiveItems,...objectItems].filter(Boolean));
+  const remaining = items.filter(x=>!consumed.has(x));
+  const output = [];
+
+  if(subject) output.push(subject.alb);
+  // Прилагательные остаются перед соответствующими существительными.
+  adjectiveItems.forEach(x=>output.push(x.alb));
+  objectItems.forEach(x=>{
+    let form=x.alb;
+    const prepIndex=x.index-1;
+    const prep=lower[prepIndex]||"";
+    const caseInfo=detectCase(prep,!!verb && !["в","во","на","к","ко","с","со","из","от","для","без","у","о","об","по","за","под","над"].includes(prep));
+    if(caseInfo.sym) form=applyCase(form,caseInfo.sym,x.ru);
+    output.push(form);
+  });
+  remaining.forEach(x=>{
+    if(x.known && ["не","ни"].includes(x.ru)) return;
+    if(x.known) output.push(x.alb);
+    else if(x.alb) output.push(x.alb);
+  });
+  if(isNeg) output.push("リフ");
+  if(isImperative && verb) output.push("∏ᔑ");
+  if(verb) output.push(verb.alb);
+  if(tensePast) output.push("ꖌᔑ");
+  if(tenseFuture) output.push("⟠");
+  if(isQuestion) output.push("ᒷ");
+
+  // Убираем дубли, возникающие из-за повторного учёта служебных слов.
+  const finalPunctuation = (clean.match(/[.!?…]+$/) || [""])[0];
+  const result = output.filter(Boolean).join(" ") + (isQuestion ? (finalPunctuation.includes("?") ? finalPunctuation : "?") : finalPunctuation);
+  const unknown = items.filter(x=>!x.known);
+  const notes = [
+    `Распознано слов: ${items.length-unknown.length} из ${items.length}`,
+    subject?`Подлежащее: ${subject.ru}`:"Подлежащее не определено однозначно",
+    objectItems.length?`Остальные именные группы: ${objectItems.map(x=>x.ru).join(", ")}`:"Именное дополнение не найдено",
+    verb?`Глагол: ${verb.ru}`:"Глагол не найден",
+    unknown.length?`Незнакомые слова записаны по буквам: ${unknown.map(x=>x.token).join(", ")}`:"",
+    `Время: ${tensePast?"прошедшее":tenseFuture?"будущее":"настоящее"}; побуждение: ${isImperative?"да":"нет"}; отрицание: ${isNeg?"да":"нет"}; вопрос: ${isQuestion?"да":"нет"}`
+  ].filter(Boolean);
+  return {result,notes:notes.join("\n")};
+}
+
+/* АЛЬБАТРОССИАНСКИЙ → РУССКИЙ */
+function parseAlb(text){
+  const clean=text.trim();
+  if(!clean) return {result:"",notes:""};
+  const isQuestion=/ᒷ(?:\s|$)/.test(clean) || /\?/.test(clean);
+  const tokens=clean.replace(/[.,!?;:]/g," ").split(/\s+/).filter(Boolean);
+  const isNeg=tokens.includes("リフ");
+  const tense=tokens.includes("ꖌᔑ")?"past":tokens.includes("⟠")?"future":"present";
+  const grammatical=tokens.filter(t=>!["ᒷ","リフ","ꖌᔑ","⟠"].includes(t));
+  const parsed=grammatical.map((token,index)=>{
+    const f=findAlb(token);
+    if(f.ru){
+      const row=DICTIONARY.find(d=>normalizeRuKey(d[0])===normalizeRuKey(f.ru));
+      return {token,index,ru:f.ru,cat:row?row[2]:"",known:true,caseName:f.caseName||""};
+    }
+    return {token,index,ru:f.translit||translitAlbToRu(token),cat:"unknown",known:false};
+  });
+  const verb=parsed.filter(x=>x.known&&VERBS_SET.has(x.ru)).pop()||null;
+  const subject=parsed.find(x=>x.known&&x!==verb&&
+    (SUBJ_SET.has(x.ru)||["Люди","Профессии"].includes(x.cat)))||null;
+  const adjectives=parsed.filter(x=>x.known&&ADJ_SET.has(x.ru));
+  const functionCats=new Set(["Служебные","Местоимения","Вопросительные"]);
+  const objects=parsed.filter(x=>x.known&&x!==verb&&x!==subject&&
+    !ADJ_SET.has(x.ru)&&!functionCats.has(x.cat)&&x.cat!=="Имена");
+  const consumed=new Set([verb,subject,...adjectives,...objects].filter(Boolean));
+  const others=parsed.filter(x=>!consumed.has(x));
+  const result=[];
+  if(subject) result.push(subject.ru);
+  adjectives.forEach(x=>result.push(x.ru));
+  objects.forEach(x=>result.push(x.ru));
+  others.forEach(x=>{if(x.known) result.push(x.ru); else if(x.ru) result.push(x.ru);});
+  if(isNeg) result.push("не");
+  if(verb) result.push(verb.ru);
+  if(tense==="past") result.push("(прошедшее время)");
+  if(tense==="future") result.push("(будущее время)");
+  const unknown=parsed.filter(x=>!x.known);
+  const notes=[
+    `Распознано слов: ${parsed.length-unknown.length} из ${parsed.length}`,
+    subject?`Подлежащее: ${subject.ru}`:"Подлежащее не определено однозначно",
+    objects.length?`Именные слова: ${objects.map(x=>x.ru).join(", ")}`:"",
+    verb?`Глагол: ${verb.ru}`:"Глагол не найден",
+    unknown.length?`Неизвестные формы: ${unknown.map(x=>x.token).join(", ")}`:"",
+    `Время: ${tense}; отрицание: ${isNeg?"да":"нет"}; вопрос: ${isQuestion?"да":"нет"}`
+  ].filter(Boolean);
+  const finalPunctuation = (clean.match(/[.!?…]+$/) || [""])[0];
+  return {result:result.join(" ")+(isQuestion ? (finalPunctuation.includes("?") ? finalPunctuation : "?") : finalPunctuation),notes:notes.join("\n")};
+}
+
+(function initTranslator(){
+  const ruIn = $("#tr-ru"), albIn = $("#tr-alb");
+  const ruOut = $("#tr-ru-out"), albOut = $("#tr-alb-out");
+  const notes = $("#tr-notes");
+
+  function translateRuToAlb(){
+    const text = ruIn.value.trim();
+    if(!text){ ruOut.textContent = "—"; return; }
+    const {result, notes:n} = parseRu(text);
+    ruOut.textContent = result || "—";
+    notes.textContent = n;
+  }
+  function translateAlbToRu(){
+    const text = albIn.value.trim();
+    if(!text){ albOut.textContent = "—"; return; }
+    const {result, notes:n} = parseAlb(text);
+    albOut.textContent = result || "—";
+    notes.textContent = n;
+  }
+  $("#tr-ru-go").addEventListener("click", translateRuToAlb);
+  $("#tr-alb-go").addEventListener("click", translateAlbToRu);
+  $("#tr-ru-speak").addEventListener("click", ()=>{
+    if(ruOut.textContent && ruOut.textContent !== "—") speakAlb(ruOut.textContent);
+  });
+  $("#tr-alb-speak").addEventListener("click", ()=>{
+    if(albIn.value.trim()) speakAlb(albIn.value.trim());
+  });
+  ruIn.addEventListener("keydown", e=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); translateRuToAlb(); }});
+  albIn.addEventListener("keydown", e=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); translateAlbToRu(); }});
+
+  ruIn.value = "Я Кирилл.";
+  albIn.value = "ᒲ￤ ꖌ￤∷￤ꖎꖎ.";
+})();
+
+/* ============ КОНСТРУКТОР ============ */
+(function(){
+  const subj = $("#b-subj"), obj = $("#b-obj"), verb = $("#b-verb");
+  const subjWords = ["ᒲ￤","勹⚍","ᓭᔑ","ᓭᔑ￤","ᒲ￤ᓭ","勹⚍ᓭ","ᓭᔑᓭ","ᒲᔑꖌᔑ","リᔑᒲ","∏ᔑ∷フ","ᓭᔑᒲᔑ","ꖌ￤∷￤ꖎꖎ"];
+  const objWords  = ["ᒲᔑꖌᔑ","ᓭᔑꖎ","⚍ꖎ","ʖᔑꖌ","∷⚍ᒲ","ᓭフꖎ","ꖎ⚍リ","リᔑᒲ","⎓￤∴","ᒲᔑᓭ","ꖌリ￤┫","ᓭ￤ꖌ⫛⟠"];
+  const verbWords = ["⍊ᔑ￤","∷ᒷꖌ","∏フꖌ","⚍ꖌ","∷⚍リ","勹ᔑꖎ","∧ᔑリ","ꖎ⚍ʖ","⋮￤⍊","∷ᔑʖ","〒￤勹","∏￤ᓭ"];
+
+  function fill(sel, arr){
+    sel.innerHTML = arr.map(w=>`<option value="${w}">${w}</option>`).join("");
+  }
+  fill(subj, subjWords); fill(obj, objWords); fill(verb, verbWords);
+
+  const caseSel = $("#b-case");
+  caseSel.innerHTML = CASES.map(c=>
+    `<option value="${c.sym}">${c.n}. ${c.name} (1-е: ${c.end}; 2-е: ${c.sym ? "ソ"+c.sym : "—"})</option>`
+  ).join("");
+
+  function build(){
+    const S = subj.value;
+    const O = applyCase(obj.value, caseSel.value);
+    const V = verb.value;
+    const tense = $("#b-tense").value;
+    const neg = $("#b-neg").value === "yes";
+    const q = $("#b-q").value === "yes";
+    const parts = [S, O];
+    if(neg) parts.push("リフ");
+    parts.push(V);
+    if(tense === "past") parts.push("ꖌᔑ");
+    if(tense === "future") parts.push("⟠");
+    if(q) parts.push("ᒷ");
+    const out = $("#b-out");
+    out.textContent = parts.join(" ");
+    out.classList.add("flash");
+    setTimeout(()=>out.classList.remove("flash"), 350);
+    const tmap = {past:"прошедшее", future:"будущее", "":"настоящее"};
+    const cname = CASES.find(c=>c.sym === caseSel.value)?.name || "прямой";
+    $("#b-gloss").textContent =
+      `SOV · ${tmap[tense]} · падеж дополнения: ${cname} · отрицание: ${neg?"да":"нет"} · вопрос: ${q?"да":"нет"}`;
+  }
+  $("#b-build").addEventListener("click", build);
+  $("#b-random").addEventListener("click", ()=>{
+    subj.selectedIndex = Math.floor(Math.random()*subj.options.length);
+    obj.selectedIndex  = Math.floor(Math.random()*obj.options.length);
+    verb.selectedIndex = Math.floor(Math.random()*verb.options.length);
+    caseSel.selectedIndex = Math.floor(Math.random()*caseSel.options.length);
+    $("#b-tense").selectedIndex = Math.floor(Math.random()*3);
+    $("#b-neg").selectedIndex = Math.floor(Math.random()*2);
+    $("#b-q").selectedIndex = Math.floor(Math.random()*2);
+    build();
+    toast("Случайное предложение");
+  });
+  $("#b-speak").addEventListener("click", ()=>{
+    const txt = $("#b-out").textContent;
+    if(txt && txt !== "—") speakAlb(txt);
+  });
+  build();
+})();
+
+/* ============ ТЕСТ ============ */
+(function(){
+  const words = DICTIONARY.filter(w=>w[2] !== "Служебные");
+  let score = 0, total = 0, current = null, answered = false, mode = "word";
+
+  const qEl = $("#quiz-q"), optsEl = $("#quiz-options"),
+        statusEl = $("#quiz-status"), scoreEl = $("#quiz-score"), totalEl = $("#quiz-total");
+
+  function pick(){
+    mode = Math.random() < 0.5 ? "case" : "word";
+    answered = false; statusEl.textContent = "";
+
+    if(mode === "word"){
+      current = words[Math.floor(Math.random()*words.length)];
+      qEl.innerHTML = `Как переводится <span class="sym">${current[1]}</span>?`;
+      const wrong = words.filter(w=>w[0]!==current[0]);
+      const options = [current];
+      while(options.length < 4){
+        const w = wrong[Math.floor(Math.random()*wrong.length)];
+        if(!options.includes(w)) options.push(w);
+      }
+      options.sort(()=>Math.random()-0.5);
+      optsEl.innerHTML = options.map(w=>
+        `<button data-ru="${w[0]}"><span>${w[0]}</span></button>`).join("");
+      optsEl.querySelectorAll("button").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          if(answered) return;
+          answered = true; total++;
+          const correct = b.dataset.ru === current[0];
+          if(correct){ score++; b.classList.add("ok"); statusEl.textContent = "Верно!"; }
+          else{
+            b.classList.add("bad");
+            const right = [...optsEl.querySelectorAll("button")]
+              .find(x=>x.dataset.ru === current[0]);
+            if(right) right.classList.add("ok");
+            statusEl.textContent = `Неверно. Правильно: ${current[0]}`;
+          }
+          scoreEl.textContent = score; totalEl.textContent = total;
+        });
+      });
+    } else {
+      const c = CASES[Math.floor(Math.random()*CASES.length)];
+      const decl = Math.random() < 0.5 ? 1 : 2;
+      const expectedEnd = c.sym ? (decl === 2 ? "ソ"+c.sym : c.sym) : "—";
+      qEl.innerHTML = `Какое окончание у <b>${c.name}</b> падежа (${c.q}), ${decl}-е склонение?`;
+      const wrong = CASES.filter(x=>x.sym !== c.sym);
+      const options = [c];
+      while(options.length < 4){
+        const w = wrong[Math.floor(Math.random()*wrong.length)];
+        if(!options.includes(w)) options.push(w);
+      }
+      options.sort(()=>Math.random()-0.5);
+      const answerEnd = x => x.sym ? (decl === 2 ? "ソ"+x.sym : x.sym) : "—";
+      optsEl.innerHTML = options.map(w=>
+        `<button data-end="${answerEnd(w)}"><span>${answerEnd(w)}</span></button>`).join("");
+      optsEl.querySelectorAll("button").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          if(answered) return;
+          answered = true; total++;
+          const correct = b.dataset.end === expectedEnd;
+          if(correct){ score++; b.classList.add("ok"); statusEl.textContent = "Верно!"; }
+          else{
+            b.classList.add("bad");
+            const right = [...optsEl.querySelectorAll("button")]
+              .find(x=>x.dataset.end === expectedEnd);
+            if(right) right.classList.add("ok");
+            statusEl.textContent = `Неверно. Правильно: ${expectedEnd}`;
+          }
+          scoreEl.textContent = score; totalEl.textContent = total;
+        });
+      });
+    }
+  }
+  $("#quiz-next").addEventListener("click", pick);
+  $("#quiz-restart").addEventListener("click", ()=>{
+    score = 0; total = 0; scoreEl.textContent = 0; totalEl.textContent = 0;
+    pick(); toast("Тест начат заново");
+  });
+  pick();
+})();
+</script>
+</body>
+</html>
