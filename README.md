@@ -1,0 +1,2 @@
+# AlbatrossianLanguage
+Это выдуманный язык
